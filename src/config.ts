@@ -1,7 +1,7 @@
 import heroImage from './assets/hero-real.jpg';
 
 export const SITE = {
-  website: 'https://spai-lab.github.io/SPAI_LAB/',
+  website: 'https://spai-lab.github.io/SPAILab/',
   author: 'SP&AI Lab',
   description: 'SP&AI Lab, Department of Information and Communication Engineering, Changwon National University.',
   title: 'SP&AI Lab',
@@ -62,7 +62,7 @@ export const LOGO_IMAGE = {
 
 export const SOCIALS = [
   {
-    link: 'https://github.com/SPAI-Lab/SPAI_LAB',
+    link: 'https://github.com/SPAI-Lab/SPAILab',
     active: true,
   },
 ];

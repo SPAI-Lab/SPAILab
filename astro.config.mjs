@@ -4,9 +4,9 @@ import react from '@astrojs/react';
 
 // https://astro.build/config
 export default defineConfig({
-  // GitHub Pages project site: https://spai-lab.github.io/SPAI_LAB/
+  // GitHub Pages project site: https://spai-lab.github.io/SPAILab/
   site: 'https://spai-lab.github.io',
-  base: '/SPAI_LAB',
+  base: '/SPAILab',
   compressHTML: true,
   build: {
     inlineStylesheets: 'always',
