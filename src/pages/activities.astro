@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -26,7 +27,7 @@ const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() 
     <h2 class="activities__heading" data-i18n-key="nav.activities">Activities</h2>
     <div class="activities__grid">
       {activities.map(activity => (
-        <a href={`/activities/${activity.id.replace(/\.[^/.]+$/, "")}`} class="activity-card">
+        <a href={url(`/activities/${activity.id.replace(/\.[^/.]+$/, "")}`)} class="activity-card">
           {activity.data.cover && (
             <div class="activity-card__media">
               <Image

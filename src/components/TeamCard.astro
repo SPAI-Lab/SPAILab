@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import type { CollectionEntry } from 'astro:content';
 import Badge from './ui/Badge.astro';
 import placeholder from '../assets/avatar-placeholder.svg';
@@ -10,7 +11,7 @@ interface Props {
 
 const { member } = Astro.props;
 const { name, role, avatar, avatarUrl, bio, email, website, linkedin, github, twitter, googleScholar } = member.data;
-const profileUrl = `/team/${member.id.replace(/\.[^/.]+$/, "")}`;
+const profileUrl = url(`/team/${member.id.replace(/\.[^/.]+$/, "")}`);
 
 // Hue mapping for title badges (cycled by index)
 const badgeHues = ['blue', 'purple', 'emerald', 'amber', 'rose'] as const;

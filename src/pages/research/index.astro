@@ -1,4 +1,5 @@
 ---
+import { url } from '../../lib/url';
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { ArrowRight } from 'lucide-react';
@@ -35,7 +36,7 @@ const researchAreas = (await getCollection('research')).sort((a, b) => a.data.or
             <p class="area__desc">
               {area.data.description}
             </p>
-            <a href={`/research/${area.id.replace(/\.[^/.]+$/, "")}`} class="area__link">
+            <a href={url(`/research/${area.id.replace(/\.[^/.]+$/, "")}`)} class="area__link">
               <span data-i18n-key="research.learnMore">Learn more</span> <ArrowRight size={16} />
             </a>
           </div>

@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
@@ -54,10 +55,10 @@ const activities = (await getCollection('activities'))
             {SITE.hero.subtitle}
           </p>
           <div class="hero__actions">
-            <a href="/achievements" class="hero__btn hero__btn--primary" data-i18n-key="hero.viewPubs">
+            <a href={url("/achievements")} class="hero__btn hero__btn--primary" data-i18n-key="hero.viewPubs">
               View Publications
             </a>
-            <a href="/team" class="hero__btn hero__btn--secondary" data-i18n-key="hero.meetTeam">
+            <a href={url("/team")} class="hero__btn hero__btn--secondary" data-i18n-key="hero.meetTeam">
               Meet the Team
             </a>
           </div>
@@ -80,7 +81,7 @@ const activities = (await getCollection('activities'))
 
       <div class="grid grid--pubs">
         {papers.map(paper => {
-          const link = paper.data.links?.website || paper.data.links?.pdf || '/achievements';
+          const link = paper.data.links?.website || paper.data.links?.pdf || url('/achievements');
           const isExternal = link.startsWith('http');
           return (
           <a
@@ -128,7 +129,7 @@ const activities = (await getCollection('activities'))
 
       <div class="grid grid--activities">
         {activities.map(item => {
-          const link = `/activities/${item.id.replace(/\.[^/.]+$/, "")}`;
+          const link = url(`/activities/${item.id.replace(/\.[^/.]+$/, "")}`);
           return (
           <div class="activity">
             {item.data.cover && (

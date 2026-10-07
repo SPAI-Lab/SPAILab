@@ -1,7 +1,7 @@
 import heroImage from './assets/hero-real.jpg';
 
 export const SITE = {
-  website: 'https://spai-lab.github.io/SPAI_LAB/', // TODO: replace with the deployed URL
+  website: 'https://spai-lab.github.io/SPAI_LAB/',
   author: 'SP&AI Lab',
   description: 'SP&AI Lab, Department of Information and Communication Engineering, Changwon National University.',
   title: 'SP&AI Lab',

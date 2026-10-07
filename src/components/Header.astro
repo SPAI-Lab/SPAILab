@@ -1,4 +1,5 @@
 ---
+import { url } from '../lib/url';
 import { SITE, LOGO_IMAGE } from '../config';
 import { 
   Menu, X, Globe, ChevronDown, Check, Moon, Sun,
@@ -28,8 +29,8 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     <div class="site-header__bar">
       <!-- Logo & Name -->
       <div class="brand">
-        <a href="/" class="brand__link">
-          {LOGO_IMAGE.enable && SITE.logo && <img src={SITE.logo} alt="Logo" class="brand__logo" />}
+        <a href={url("/")} class="brand__link">
+          {LOGO_IMAGE.enable && SITE.logo && <img src={url(SITE.logo)} alt="Logo" class="brand__logo" />}
           <div class="brand__text">
             <span class="brand__name">
               {SITE.labName}
@@ -47,7 +48,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
           if (item.key === 'search') {
             return (
               <a 
-                href={item.link} 
+                href={url(item.link)} 
                 class="desktop-nav__icon-link"
                 aria-label={item.text}
               >
@@ -57,7 +58,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
           }
           return (
             <a 
-              href={item.link} 
+              href={url(item.link)} 
               class="desktop-nav__link"
               data-i18n-key={`nav.${item.key}`}
             >
@@ -69,7 +70,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
         <!-- Custom Pages -->
         {customPages && customPages.map(item => (
            <a 
-             href={item.link} 
+             href={url(item.link)} 
              class="desktop-nav__link"
              data-i18n-key={item.key} 
            >
@@ -135,7 +136,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     <!-- Header with Close Button -->
     <div class="mobile-menu__top">
       <div class="mobile-menu__brand">
-        {LOGO_IMAGE.enable && SITE.logo && <img src={SITE.logo} alt="Logo" class="mobile-menu__logo" />}
+        {LOGO_IMAGE.enable && SITE.logo && <img src={url(SITE.logo)} alt="Logo" class="mobile-menu__logo" />}
         <span class="mobile-menu__name">{SITE.labName}</span>
       </div>
       <button 
@@ -151,7 +152,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     <nav class="mobile-menu__nav">
       {nav.map((item) => (
         <a 
-          href={item.link} 
+          href={url(item.link)} 
           class="mobile-menu__link"
           data-i18n-key={`nav.${item.key}`}
           onclick="window.closeMobileMenu()"
@@ -164,7 +165,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
       <!-- Custom Pages Mobile -->
       {customPages && customPages.map((item) => (
         <a 
-          href={item.link} 
+          href={url(item.link)} 
           class="mobile-menu__link"
           data-i18n-key={item.key}
           onclick="window.closeMobileMenu()"

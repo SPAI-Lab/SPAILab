@@ -1,4 +1,5 @@
 ---
+import { url } from '../../lib/url';
 import { ArrowRight } from 'lucide-react';
 // Section title with a "View all" link on the right.
 interface Props { title: string; titleKey?: string; href: string; linkText?: string; linkKey?: string; }
@@ -6,7 +7,7 @@ const { title, titleKey, href, linkText = 'View all', linkKey = 'section.viewAll
 ---
 <div class="section-header">
   <h2 data-i18n-key={titleKey}>{title}</h2>
-  <a href={href}>
+  <a href={url(href)}>
     <span data-i18n-key={linkKey}>{linkText}</span> <ArrowRight size={16} />
   </a>
 </div>

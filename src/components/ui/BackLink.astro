@@ -1,11 +1,12 @@
 ---
+import { url } from '../../lib/url';
 // "← Back to X" link shown at the top of detail pages.
 import { ArrowLeft } from 'lucide-react';
 
 interface Props { href: string; }
 const { href } = Astro.props;
 ---
-<a href={href} class="back-link">
+<a href={url(href)} class="back-link">
   <ArrowLeft size={16} />
   <span><slot /></span>
 </a>
