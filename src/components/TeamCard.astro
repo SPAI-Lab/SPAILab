@@ -1,89 +1,132 @@
 ---
-import { Mail, Globe, Twitter, GraduationCap } from 'lucide-react';
 import type { CollectionEntry } from 'astro:content';
+import Badge from './ui/Badge.astro';
+import placeholder from '../assets/avatar-placeholder.svg';
+import SocialLinks from './ui/SocialLinks.astro';
 
 interface Props {
   member: CollectionEntry<'team'>;
 }
 
 const { member } = Astro.props;
-const { name, role, avatar, bio, email, website, linkedin, github, twitter, googleScholar } = member.data;
+const { name, role, avatar, avatarUrl, bio, email, website, linkedin, github, twitter, googleScholar } = member.data;
+const profileUrl = `/team/${member.id.replace(/\.[^/.]+$/, "")}`;
 
-// Color mapping for title badges
-const badgeColors = [
-  "text-blue-700 bg-blue-50 border-blue-100",
-  "text-purple-700 bg-purple-50 border-purple-100",
-  "text-emerald-700 bg-emerald-50 border-emerald-100",
-  "text-amber-700 bg-amber-50 border-amber-100",
-  "text-rose-700 bg-rose-50 border-rose-100"
-];
+// Hue mapping for title badges (cycled by index)
+const badgeHues = ['blue', 'purple', 'emerald', 'amber', 'rose'] as const;
 ---
 
-<div class="group flex flex-col items-center text-center">
+<div class="team-card">
   <!-- Avatar Container -->
-  <div class="relative w-48 h-48 mb-4 rounded-xl overflow-hidden bg-gray-100 group-hover:shadow-lg transition-shadow">
-    <a href={`/team/${member.id.replace(/\.[^/.]+$/, "")}`} class="block w-full h-full">
-      <img 
-        src={avatar.src} 
-        alt={name} 
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" 
-        loading="lazy"
-      />
+  <div class="team-card__avatar">
+    <a href={profileUrl} class="team-card__avatar-link">
+      <img src={avatarUrl ?? (avatar ?? placeholder).src} alt={name} class="team-card__img" loading="lazy" />
     </a>
-    
+
     <!-- Social Overlay (appears on hover) -->
-    <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center gap-3 backdrop-blur-[2px] pointer-events-none">
-      <div class="pointer-events-auto flex flex-wrap justify-center gap-2 px-2">
-      {email && (
-        <a href={`mailto:${email}`} class="p-2 bg-white rounded-full text-gray-700 hover:text-blue-600 hover:scale-110 transition-all" title="Email" aria-label="Email">
-          <Mail className="w-4 h-4" />
-        </a>
-      )}
-      {website && (
-        <a href={website} target="_blank" class="p-2 bg-white rounded-full text-gray-700 hover:text-blue-600 hover:scale-110 transition-all" title="Website" aria-label="Website">
-          <Globe className="w-4 h-4" />
-        </a>
-      )}
-      {linkedin && (
-        <a href={linkedin} target="_blank" class="p-2 bg-white rounded-full text-gray-700 hover:text-blue-600 hover:scale-110 transition-all" title="LinkedIn" aria-label="LinkedIn">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path><rect x="2" y="9" width="4" height="12"></rect><circle cx="4" cy="4" r="2"></circle></svg>
-        </a>
-      )}
-      {github && (
-        <a href={github} target="_blank" class="p-2 bg-white rounded-full text-gray-700 hover:text-blue-600 hover:scale-110 transition-all" title="GitHub" aria-label="GitHub">
-          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="w-4 h-4"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-        </a>
-      )}
-      {twitter && (
-        <a href={twitter} target="_blank" class="p-2 bg-white rounded-full text-gray-700 hover:text-blue-400 hover:scale-110 transition-all" title="Twitter" aria-label="Twitter">
-          <Twitter className="w-4 h-4" />
-        </a>
-      )}
-      {googleScholar && (
-        <a href={googleScholar} target="_blank" class="p-2 bg-white rounded-full text-gray-700 hover:text-blue-600 hover:scale-110 transition-all" title="Google Scholar" aria-label="Google Scholar">
-          <GraduationCap className="w-4 h-4" />
-        </a>
-      )}
+    <div class="team-card__overlay">
+      <div class="team-card__overlay-links">
+        <SocialLinks variant="icon" {email} {website} {linkedin} {github} {twitter} {googleScholar} />
       </div>
     </div>
   </div>
 
   <!-- Info -->
-  <a href={`/team/${member.id.replace(/\.[^/.]+$/, "")}`} class="hover:underline decoration-blue-600 underline-offset-2 mb-2">
-    <h3 class="text-lg font-semibold text-gray-900">{name}</h3>
+  <a href={profileUrl} class="team-card__name-link">
+    <h3 class="team-card__name">{name}</h3>
   </a>
-  
+
   {member.data.title && member.data.title.length > 0 && (
-    <div class="flex flex-wrap justify-center gap-2 mb-3 px-2">
+    <div class="team-card__badges">
       {member.data.title.map((t, index) => (
-        <span class={`inline-block px-2 py-0.5 text-xs font-medium border rounded-full ${badgeColors[index % badgeColors.length]}`}>
-          {t}
-        </span>
+        <Badge hue={badgeHues[index % badgeHues.length]}>{t}</Badge>
       ))}
     </div>
   )}
-  
+
   {/* Role display removed as per request, relying on section headers and title badges */}
-  
-  {bio && <p class="text-sm text-gray-500 line-clamp-2 px-2">{bio}</p>}
+
+  {bio && <p class="team-card__bio">{bio}</p>}
 </div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .team-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .team-card__avatar {
+    position: relative;
+    width: 12rem;
+    height: 12rem;
+    margin-bottom: 1rem;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    background: color(gray, 100);
+    transition: box-shadow 0.15s ease;
+  }
+  .team-card:hover .team-card__avatar { box-shadow: var(--shadow-lg); }
+
+  .team-card__avatar-link { display: block; width: 100%; height: 100%; }
+
+  .team-card__img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+  }
+  .team-card:hover .team-card__img { transform: scale(1.05); }
+
+  .team-card__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    background: rgb(0 0 0 / 0.2);
+    backdrop-filter: blur(2px);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+  }
+  .team-card:hover .team-card__overlay { opacity: 1; }
+
+  .team-card__overlay-links { pointer-events: auto; }
+
+  .team-card__name-link {
+    margin-bottom: 0.5rem;
+    text-decoration-color: color(blue, 600);
+    text-underline-offset: 2px;
+    &:hover { text-decoration: underline; }
+  }
+
+  .team-card__name {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+    font-weight: 600;
+    color: color(gray, 900);
+  }
+
+  .team-card__badges {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    padding-inline: 0.5rem;
+  }
+
+  .team-card__bio {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: color(gray, 500);
+    padding-inline: 0.5rem;
+    @include line-clamp(2);
+  }
+</style>

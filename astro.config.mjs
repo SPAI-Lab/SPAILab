@@ -1,7 +1,5 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
-
-import tailwindcss from '@tailwindcss/vite';
 import react from '@astrojs/react';
 
 // https://astro.build/config
@@ -9,14 +7,18 @@ export default defineConfig({
   compressHTML: true,
   build: {
     inlineStylesheets: 'always',
-    assetsInlineLimit: 10240, // 10KB to inline achievements.css (7.5KB)
   },
   vite: {
-    plugins: [tailwindcss()],
+    css: {
+      preprocessorOptions: {
+        // Lets every .scss / <style lang="scss"> write `@use 'tokens'` / `@use 'mixins'`
+        scss: { loadPaths: ['src/styles'] },
+      },
+    },
     build: {
       assetsInlineLimit: 10240,
-    }
+    },
   },
 
-  integrations: [react()]
+  integrations: [react()],
 });

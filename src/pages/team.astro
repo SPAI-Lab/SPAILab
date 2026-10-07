@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import TeamCard from '../components/TeamCard.astro';
+import Container from '../components/ui/Container.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
 import { getCollection } from 'astro:content';
 
 const allMembers = await getCollection('team');
@@ -89,18 +91,19 @@ const groupedMembers = groups.reduce((acc, group) => {
 ---
 
 <Layout title="Team">
-  <div class="max-w-7xl mx-auto px-4 py-12 sm:py-20">
-    <div class="max-w-3xl mx-auto text-center mb-16">
-      <h1 class="text-4xl font-bold text-gray-900 mb-4" data-i18n-key="team.title">Our Team</h1>
-      <p class="text-lg text-gray-600" data-i18n-key="team.subtitle">
-        Meet the researchers and students behind our innovations.
-      </p>
-    </div>
+  <Container padded>
+    <PageHeader
+      align="center"
+      title="Our Team"
+      titleKey="team.title"
+      subtitle="Meet the researchers and students behind our innovations."
+      subtitleKey="team.subtitle"
+    />
 
-    <div class="space-y-20">
+    <div class="team__groups">
       {groupedMembers.map(group => (
         <section>
-          <h2 class="text-2xl font-bold text-gray-900 mb-8 pl-4 border-l-4 border-blue-600" data-i18n-key={group.titleKey}>
+          <h2 class="team__group-title" data-i18n-key={group.titleKey}>
             {/* Fallback text if JS doesn't replace it immediately, though i18n script should handle it */}
             {group.id === 'pi' ? 'Principal Investigator' :
              group.id === 'faculty' ? 'Faculty' :
@@ -111,7 +114,7 @@ const groupedMembers = groups.reduce((acc, group) => {
              group.id === 'undergrad' ? 'Undergraduate Students' :
              group.id === 'alumni' ? 'Alumni' : ''}
           </h2>
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+          <div class="team__grid">
             {group.members.map(member => (
               <TeamCard member={member} />
             ))}
@@ -120,8 +123,41 @@ const groupedMembers = groups.reduce((acc, group) => {
       ))}
 
       {allMembers.length === 0 && (
-        <p class="text-gray-500 text-center py-12" data-i18n-key="team.noMembers">No team members found. Add markdown files to src/content/team/</p>
+        <p class="team__empty" data-i18n-key="team.noMembers">No team members found. Add markdown files to src/content/team/</p>
       )}
     </div>
-  </div>
+  </Container>
 </Layout>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .team__groups > * + * { margin-top: 5rem; }
+
+  .team__group-title {
+    font-size: 1.5rem;
+    line-height: 2rem;
+    font-weight: 700;
+    color: color(gray, 900);
+    margin-bottom: 2rem;
+    padding-left: 1rem;
+    border-left: 4px solid color(blue, 600);
+  }
+
+  .team__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    column-gap: 2rem;
+    row-gap: 3rem;
+
+    @include up(sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @include up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  }
+
+  .team__empty {
+    color: color(gray, 500);
+    text-align: center;
+    padding-block: 3rem;
+  }
+</style>

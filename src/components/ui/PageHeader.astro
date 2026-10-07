@@ -1,0 +1,22 @@
+---
+interface Props {
+  title: string;
+  subtitle?: string;
+  titleKey?: string;    // data-i18n-key for the title
+  subtitleKey?: string; // data-i18n-key for the subtitle
+  align?: 'left' | 'center';
+}
+const { title, subtitle, titleKey, subtitleKey, align = 'left' } = Astro.props;
+---
+<header class:list={['page-header', `page-header--${align}`]}>
+  <h1 data-i18n-key={titleKey}>{title}</h1>
+  {subtitle && <p data-i18n-key={subtitleKey}>{subtitle}</p>}
+</header>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  .page-header { margin-bottom: 3rem; }
+  .page-header--center { max-width: 48rem; margin-inline: auto; text-align: center; margin-bottom: 4rem; }
+  h1 { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; color: color(gray, 900); margin-bottom: 1rem; }
+  p { font-size: 1.125rem; line-height: 1.75rem; color: color(gray, 600); }
+</style>

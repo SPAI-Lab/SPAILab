@@ -2,44 +2,41 @@
 import Layout from '../../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { ArrowRight } from 'lucide-react';
+import Container from '../../components/ui/Container.astro';
+import PageHeader from '../../components/ui/PageHeader.astro';
+import EmptyState from '../../components/ui/EmptyState.astro';
 
 const researchAreas = (await getCollection('research')).sort((a, b) => a.data.order - b.data.order);
 ---
 
 <Layout title="Research">
-  <div class="max-w-7xl mx-auto px-4 py-12 sm:py-20">
-    <div class="max-w-3xl mx-auto text-center mb-16">
-      <h1 class="text-4xl font-bold text-gray-900 mb-4" data-i18n-key="nav.research">Research Areas</h1>
-      <p class="text-lg text-gray-600" data-i18n-key="research.subtitle">
-        Our lab explores the frontiers of artificial intelligence, with a focus on computer vision and machine learning.
-      </p>
-    </div>
+  <Container padded>
+    <PageHeader
+      align="center"
+      title="Research Areas"
+      titleKey="nav.research"
+      subtitle="Our lab explores the frontiers of artificial intelligence, with a focus on computer vision and machine learning."
+      subtitleKey="research.subtitle"
+    />
 
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div class="areas">
       {researchAreas.map(area => (
-        <div class="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300">
+        <div class="area">
           {area.data.cover && (
-            <div class="h-48 overflow-hidden bg-gray-100">
-              <img 
-                src={area.data.cover.src} 
-                alt={area.data.title} 
-                class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+            <div class="area__cover">
+              <img src={area.data.cover.src} alt={area.data.title} />
             </div>
           )}
-          
-          <div class="p-6">
-            <h2 class="text-xl font-bold text-gray-900 mb-3 group-hover:text-blue-600 transition-colors">
+
+          <div class="area__body">
+            <h2 class="area__title">
               {area.data.title}
             </h2>
-            <p class="text-gray-600 text-sm mb-4 line-clamp-3">
+            <p class="area__desc">
               {area.data.description}
             </p>
-            <a 
-              href={`/research/${area.id.replace(/\.[^/.]+$/, "")}`} 
-              class="inline-flex items-center text-sm font-medium text-blue-600 hover:text-blue-700"
-            >
-              <span data-i18n-key="research.learnMore">Learn more</span> <ArrowRight className="ml-1 w-4 h-4" />
+            <a href={`/research/${area.id.replace(/\.[^/.]+$/, "")}`} class="area__link">
+              <span data-i18n-key="research.learnMore">Learn more</span> <ArrowRight size={16} />
             </a>
           </div>
         </div>
@@ -47,9 +44,41 @@ const researchAreas = (await getCollection('research')).sort((a, b) => a.data.or
     </div>
 
     {researchAreas.length === 0 && (
-      <div class="text-center py-20">
-        <p class="text-gray-500" data-i18n-key="research.noAreas">No research areas defined. Add markdown files to src/content/research/</p>
-      </div>
+      <EmptyState message="No research areas defined. Add markdown files to src/content/research/" i18nKey="research.noAreas" />
     )}
-  </div>
+  </Container>
 </Layout>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .areas {
+    display: grid; grid-template-columns: 1fr; gap: 2rem;
+    @include up(md) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @include up(lg) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .area {
+    @include surface(var(--radius-2xl));
+    position: relative; overflow: hidden; transition: box-shadow 0.3s ease;
+    &:hover { box-shadow: var(--shadow-lg); }
+    &:hover .area__title { color: color(blue, 600); }
+    &:hover .area__cover img { transform: scale(1.05); }
+  }
+  .area__cover {
+    height: 12rem; overflow: hidden; background: color(gray, 100);
+    img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+  }
+  .area__body { padding: 1.5rem; }
+  .area__title {
+    font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900);
+    margin-bottom: 0.75rem; transition: color 0.15s ease;
+  }
+  .area__desc { color: color(gray, 600); font-size: 0.875rem; line-height: 1.25rem; margin-bottom: 1rem; @include line-clamp(3); }
+  .area__link {
+    display: inline-flex; align-items: center; font-size: 0.875rem; line-height: 1.25rem;
+    font-weight: 500; color: color(blue, 600);
+    &:hover { color: color(blue, 700); }
+    :global(svg) { margin-left: 0.25rem; }
+  }
+</style>

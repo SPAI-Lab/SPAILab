@@ -1,0 +1,16 @@
+---
+// Section title with a leading icon (icon is a lucide-react component).
+interface Props { title: string; i18nKey?: string; icon: any; }
+const { title, i18nKey, icon: Icon } = Astro.props;
+---
+<div class="section-heading">
+  <span class="section-heading__icon"><Icon size={32} /></span>
+  <h2 data-i18n-key={i18nKey}>{title}</h2>
+</div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  .section-heading { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 2rem; }
+  .section-heading__icon { display: inline-flex; color: color(blue, 600); }
+  h2 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: color(gray, 900); }
+</style>

@@ -1,0 +1,21 @@
+---
+// Centered page width. size: narrow (4xl) | prose (3xl) | text (2xl) | default (7xl)
+interface Props {
+  size?: 'narrow' | 'prose' | 'text' | 'default';
+  padded?: boolean; // adds the standard vertical page padding
+  class?: string;
+}
+const { size = 'default', padded = false, class: className } = Astro.props;
+---
+<div class:list={['container', `container--${size}`, { 'container--padded': padded }, className]}>
+  <slot />
+</div>
+
+<style lang="scss">
+  @use 'mixins' as *;
+  .container { @include container(default); }
+  .container--narrow { @include container(narrow); }
+  .container--prose { @include container(prose); }
+  .container--text { @include container(text); }
+  .container--padded { @include page-padding; }
+</style>

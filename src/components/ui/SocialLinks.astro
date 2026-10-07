@@ -1,0 +1,102 @@
+---
+// Social/contact links for a team member. variant "icon" = round icon buttons
+// (team card overlay), "pill" = labelled pills (member detail page).
+import { Mail, Globe, Twitter, GraduationCap, Linkedin, Github } from 'lucide-react';
+
+interface Props {
+  email?: string;
+  website?: string;
+  linkedin?: string;
+  github?: string;
+  twitter?: string;
+  googleScholar?: string;
+  variant?: 'icon' | 'pill';
+}
+
+const { email, website, linkedin, github, twitter, googleScholar, variant = 'pill' } = Astro.props;
+
+const links = [
+  email && { key: 'email', href: `mailto:${email}`, Icon: Mail, label: 'Email', title: 'Email', external: false },
+  website && { key: 'website', href: website, Icon: Globe, label: 'Website', title: 'Website', external: true },
+  linkedin && { key: 'linkedin', href: linkedin, Icon: Linkedin, label: 'LinkedIn', title: 'LinkedIn', external: true },
+  github && { key: 'github', href: github, Icon: Github, label: 'GitHub', title: 'GitHub', external: true },
+  twitter && { key: 'twitter', href: twitter, Icon: Twitter, label: 'Twitter', title: 'Twitter', external: true },
+  googleScholar && { key: 'scholar', href: googleScholar, Icon: GraduationCap, label: 'Scholar', title: 'Google Scholar', external: true },
+].filter(Boolean) as Array<{ key: string; href: string; Icon: any; label: string; title: string; external: boolean }>;
+---
+
+{links.length > 0 && (
+  <div class:list={['social', `social--${variant}`]}>
+    {links.map(({ key, href, Icon, label, title, external }) => (
+      <a
+        href={href}
+        target={external ? '_blank' : undefined}
+        class:list={['social__link', `social__link--${key}`]}
+        title={variant === 'icon' ? title : undefined}
+        aria-label={variant === 'icon' ? title : undefined}
+      >
+        <Icon size={16} />
+        {variant === 'pill' && <span>{label}</span>}
+      </a>
+    ))}
+  </div>
+)}
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .social {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .social__link {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  // Round icon buttons
+  .social--icon {
+    gap: 0.5rem;
+    padding-inline: 0.5rem;
+
+    .social__link {
+      padding: 0.5rem;
+      background: var(--c-white);
+      border-radius: var(--radius-full);
+      color: color(gray, 700);
+      transition: all 0.15s ease;
+
+      &:hover {
+        color: color(blue, 600);
+        transform: scale(1.1);
+      }
+    }
+
+    .social__link--twitter:hover { color: color(blue, 400); }
+  }
+
+  // Labelled pills
+  .social--pill {
+    gap: 0.75rem;
+    @include up(md) { justify-content: flex-start; }
+
+    .social__link {
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--radius-full);
+      background: color(gray, 50);
+      color: color(gray, 600);
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      transition: color 0.15s ease, background-color 0.15s ease;
+
+      &:hover {
+        background: color(blue, 50);
+        color: color(blue, 600);
+      }
+    }
+  }
+</style>

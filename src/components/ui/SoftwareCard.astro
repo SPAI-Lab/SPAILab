@@ -1,0 +1,33 @@
+---
+import { FileCode } from 'lucide-react';
+interface Props { title: string; developers: string[]; number: string; date: Date; }
+const { title, developers, number, date } = Astro.props;
+---
+<div class="software">
+  <div class="software__head">
+    <div class="software__icon"><FileCode size={24} /></div>
+    <h3 title={title}>{title}</h3>
+  </div>
+  <div class="software__body">
+    <div>
+      <span class="software__label" data-i18n-key="achievements.developers">Developers:</span> {developers.join(', ')}
+    </div>
+    <div class="software__meta">
+      <span class="software__number">{number}</span>
+      <time>{date.toLocaleDateString()}</time>
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+  .software { @include surface; @include hover-lift; padding: 1.5rem; box-shadow: var(--shadow-sm); &:hover { box-shadow: var(--shadow-md); } }
+  .software__head { display: flex; align-items: flex-start; gap: 1rem; margin-bottom: 1rem; }
+  .software__icon { display: flex; padding: 0.75rem; background: color(blue, 50); color: color(blue, 600); border-radius: var(--radius-lg); flex-shrink: 0; }
+  h3 { font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); padding-top: 0.25rem; @include line-clamp(2); }
+  .software__body { font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 600); > * + * { margin-top: 0.5rem; } }
+  .software__label { font-weight: 500; color: color(gray, 900); }
+  .software__meta { display: flex; align-items: center; justify-content: space-between; padding-top: 0.5rem; border-top: 1px solid color(gray, 50); time { color: color(gray, 400); } }
+  .software__number { font-family: var(--font-mono); background: color(gray, 50); padding: 0.125rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid color(gray, 200); font-size: 0.75rem; line-height: 1rem; }
+</style>

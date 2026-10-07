@@ -1,0 +1,19 @@
+---
+// Small rounded label. hue picks a palette color; bold gives the stronger weight.
+interface Props {
+  hue?: 'gray' | 'blue' | 'green' | 'amber' | 'red' | 'purple' | 'rose' | 'emerald' | 'orange' | 'indigo';
+  bold?: boolean;
+  class?: string;
+}
+const { hue = 'gray', bold = false, class: className } = Astro.props;
+---
+<span class:list={['badge', `badge--${hue}`, { 'badge--bold': bold }, className]}><slot /></span>
+
+<style lang="scss">
+  @use 'mixins' as *;
+  .badge { @include pill(gray); }
+  .badge--bold { font-weight: 700; }
+  @each $hue in (blue, green, amber, red, purple, rose, emerald, orange, indigo) {
+    .badge--#{$hue} { @include pill($hue); }
+  }
+</style>

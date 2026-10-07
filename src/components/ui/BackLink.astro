@@ -1,0 +1,28 @@
+---
+// "← Back to X" link shown at the top of detail pages.
+import { ArrowLeft } from 'lucide-react';
+
+interface Props { href: string; }
+const { href } = Astro.props;
+---
+<a href={href} class="back-link">
+  <ArrowLeft size={16} />
+  <span><slot /></span>
+</a>
+
+<style lang="scss">
+  @use 'tokens' as *;
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 2rem;
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+    color: color(gray, 500);
+    transition: color 0.15s ease;
+
+    &:hover { color: color(blue, 600); }
+  }
+</style>

@@ -1,0 +1,14 @@
+---
+// Dashed placeholder shown when a list has no entries.
+interface Props { message: string; i18nKey?: string; }
+const { message, i18nKey } = Astro.props;
+---
+<div class="empty">
+  <p data-i18n-key={i18nKey}>{message}</p>
+</div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  .empty { text-align: center; padding-block: 3rem; background: color(gray, 50); border: 1px dashed color(gray, 200); border-radius: var(--radius-xl); }
+  p { color: color(gray, 500); }
+</style>

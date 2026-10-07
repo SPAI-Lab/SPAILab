@@ -1,0 +1,18 @@
+---
+import Container from './ui/Container.astro';
+import { SITE } from '../config';
+---
+<footer class="footer">
+  <Container>
+    <p>© {new Date().getFullYear()} {SITE.labName}, {SITE.university}</p>
+    <p class="credit">
+      Built with <a href="https://github.com/fjd2004711/scholar-lite" target="_blank" rel="noopener">Scholar-Lite</a> (MIT)
+    </p>
+  </Container>
+</footer>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  .footer { border-top: 1px solid color(gray, 100); padding-block: 2rem; margin-top: 3rem; background: color(gray, 50); text-align: center; font-size: 0.875rem; color: color(gray, 500); }
+  .credit { margin-top: 0.25rem; font-size: 0.75rem; color: color(gray, 400); a:hover { color: color(gray, 700); } }
+</style>

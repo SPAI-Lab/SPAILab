@@ -1,0 +1,65 @@
+@use 'sass:map';
+@use 'tokens' as *;
+
+// @include up(md) { ... }  ==  Tailwind's md: prefix
+@mixin up($bp) {
+  @media (min-width: map.get($breakpoints, $bp)) {
+    @content;
+  }
+}
+
+// Centered, padded page width. Replaces `max-w-* mx-auto px-4 ...`.
+@mixin container($size: default) {
+  max-width: map.get($container-widths, $size);
+  margin-inline: auto;
+  padding-inline: 1rem;
+  @include up(sm) { padding-inline: 1.5rem; }
+  @include up(lg) { padding-inline: 2rem; }
+}
+
+// Vertical page padding used by every top-level page.
+@mixin page-padding {
+  padding-block: 3rem;
+  @include up(sm) { padding-block: 5rem; }
+}
+
+// White bordered surface (cards, list items).
+@mixin surface($radius: var(--radius-xl)) {
+  background: var(--c-white);
+  border: 1px solid color(gray, 100);
+  border-radius: $radius;
+}
+
+@mixin hover-lift {
+  transition: box-shadow 0.2s ease;
+  &:hover { box-shadow: var(--shadow-md); }
+}
+
+// Small rounded label. Pair with a hue: @include pill(blue);
+@mixin pill($hue: gray) {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.125rem 0.625rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1rem;
+  color: color($hue, 700);
+  background: color($hue, 50);
+  border: 1px solid color($hue, 200);
+}
+
+@mixin line-clamp($lines) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@mixin icon($size: 1rem) {
+  width: $size;
+  height: $size;
+  flex-shrink: 0;
+}

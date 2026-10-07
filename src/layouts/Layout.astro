@@ -1,6 +1,7 @@
 ---
-import '../styles/global.css';
+import '../styles/global.scss';
 import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
 import { SITE } from '../config';
 import { ui, defaultLang } from '../i18n/ui';
 
@@ -73,21 +74,13 @@ const ogImage = new URL(`/og/${finalOgSlug}.png`, Astro.url);
       )
     }
   </head>
-  <body class="min-h-screen flex flex-col">
+  <body>
     <Header />
-    <main class="flex-grow" data-pagefind-body>
+    <main data-pagefind-body>
       <slot />
     </main>
     
-    <footer class="border-t border-gray-100 py-8 mt-12 bg-gray-50">
-      <div class="max-w-7xl mx-auto px-4 text-center text-gray-500 text-sm">
-        <p>
-          <a href="https://github.com/fjd2004711/scholar-lite" target="_blank" class="hover:text-gray-700 inline-flex items-center gap-1 transition-colors">
-            Built with Scholar-Lite Open Source Template
-          </a>
-        </p>
-      </div>
-    </footer>
+    <Footer />
 
     <script is:inline define:vars={{ ui, defaultLang }}>
       // Make ui available globally for debugging if needed, but main logic is here

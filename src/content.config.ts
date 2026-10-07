@@ -1,29 +1,37 @@
 import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
+// Publications and books share one base shape (see referenceFields).
+const links = z.object({
+  pdf: z.string().optional(),
+  code: z.string().optional(),
+  website: z.string().optional(),
+  demo: z.string().optional(),
+  slides: z.string().optional(),
+  video: z.string().optional(),
+});
+
+const referenceFields = (image: () => z.ZodType<any>) => ({
+  title: z.string(),
+  authors: z.array(z.string()),
+  year: z.number(),
+  venue: z.string(),
+  cover: (image() as any).optional(),
+  doi: z.string().optional(),
+  award: z.string().optional(),
+  links: links.optional(),
+  keywords: z.array(z.string()).optional(), // extra search keywords (auto keywords come from src/lib/keywords.ts)
+});
+
 const publications = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/publications" }),
   schema: ({ image }) => z.object({
-    title: z.string(),
-    authors: z.array(z.string()),
-    year: z.number(),
-    venue: z.string(),
+    ...referenceFields(image),
     type: z.enum(['paper', 'book', 'patent', 'software']).default('paper'),
-    cover: image().optional(),
-    doi: z.string().optional(),
-    award: z.string().optional(),
-    links: z.object({
-      pdf: z.string().optional(),
-      code: z.string().optional(),
-      website: z.string().optional(),
-      demo: z.string().optional(),
-      slides: z.string().optional(),
-      video: z.string().optional(),
-    }).optional(),
     featured: z.boolean().default(false),
     badges: z.array(z.object({
       text: z.string(),
-      type: z.enum(['gold', 'blue', 'red', 'green', 'default']).default('default')
+      type: z.enum(['gold', 'blue', 'red', 'green', 'default']).default('default'),
     })).optional(),
   }),
 });
@@ -31,25 +39,10 @@ const publications = defineCollection({
 const books = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/books" }),
   schema: ({ image }) => z.object({
-    title: z.string(),
-    authors: z.array(z.string()),
-    year: z.number(),
-    venue: z.string(),
-    cover: image().optional(),
-    doi: z.string().optional(),
-    award: z.string().optional(),
-    links: z.object({
-      pdf: z.string().optional(),
-      code: z.string().optional(),
-      website: z.string().optional(),
-      demo: z.string().optional(),
-      slides: z.string().optional(),
-      video: z.string().optional(),
-    }).optional(),
-    // Removed featured as per user request
+    ...referenceFields(image),
     badges: z.array(z.object({
       text: z.string(),
-      type: z.enum(['gold', 'blue', 'red', 'green', 'default']).default('default')
+      type: z.enum(['gold', 'blue', 'red', 'green', 'default']).default('default'),
     })).optional(),
   }),
 });
@@ -69,9 +62,10 @@ const team = defineCollection({
       'Master Student', 
       'Undergraduate', 
       'Alumni'
-    ]),
+    ]).default('Master Student'),
     title: z.array(z.string()).optional(), // For specific academic titles like "Academician", "Changjiang Scholar"
-    avatar: image(),
+    avatar: image().optional(), // local photo in src/assets; falls back to avatar-placeholder.svg
+    avatarUrl: z.string().url().optional(), // external image URL (takes priority over avatar)
     bio: z.string().optional(), // Short bio for card
     email: z.string().optional(),
     website: z.string().optional(),

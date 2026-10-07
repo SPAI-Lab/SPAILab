@@ -1,0 +1,25 @@
+---
+import { ArrowRight } from 'lucide-react';
+// Section title with a "View all" link on the right.
+interface Props { title: string; titleKey?: string; href: string; linkText?: string; linkKey?: string; }
+const { title, titleKey, href, linkText = 'View all', linkKey = 'section.viewAll' } = Astro.props;
+---
+<div class="section-header">
+  <h2 data-i18n-key={titleKey}>{title}</h2>
+  <a href={href}>
+    <span data-i18n-key={linkKey}>{linkText}</span> <ArrowRight size={16} />
+  </a>
+</div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  .section-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem; }
+  h2 { font-size: 1.875rem; line-height: 2.25rem; font-weight: 700; color: color(gray, 900); }
+  a {
+    display: flex; align-items: center; gap: 0.25rem;
+    color: color(blue, 600); font-weight: 500;
+    &:hover { color: color(blue, 700); }
+    :global(svg) { transition: transform 0.15s ease; }
+    &:hover :global(svg) { transform: translateX(0.25rem); }
+  }
+</style>

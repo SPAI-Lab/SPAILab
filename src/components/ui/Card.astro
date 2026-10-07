@@ -1,0 +1,13 @@
+---
+// White bordered surface used for list items and tiles.
+interface Props { hover?: boolean; padded?: boolean; class?: string; }
+const { hover = true, padded = true, class: className } = Astro.props;
+---
+<div class:list={['card', { 'card--hover': hover, 'card--padded': padded }, className]}><slot /></div>
+
+<style lang="scss">
+  @use 'mixins' as *;
+  .card { @include surface; }
+  .card--padded { padding: 1.5rem; }
+  .card--hover { @include hover-lift; }
+</style>

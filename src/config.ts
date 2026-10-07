@@ -1,26 +1,26 @@
 import heroImage from './assets/hero-real.jpg';
 
 export const SITE = {
-  website: 'https://scholar-lite-demo.netlify.app/', // Replace with your actual deployed URL
-  author: 'Scholar-Lite Team',
-  description: 'A lightweight, modern static website template for academic labs and scholars.',
-  title: 'Scholar-Lite',
+  website: 'https://spai-lab.github.io/SPAI_LAB/', // TODO: replace with the deployed URL
+  author: 'SP&AI Lab',
+  description: 'SP&AI Lab, Department of Information and Communication Engineering, Changwon National University.',
+  title: 'SP&AI Lab',
   ogImage: 'astropaper-og.jpg',
   lightAndDarkMode: true,
   postPerPage: 3,
   scheduledPostMargin: 15 * 60 * 1000, // 15 minutes
   
   // Lab Info
-  labName: 'Scholar-Lite Lab',
-  university: 'University Name',
-  logo: '/assets/logo-real.svg', // Logo path
-  avatar: '/assets/logo-real.svg', // Avatar for SEO/Schema
-  email: 'contact@lab.edu', // Contact email for Join Us page
+  labName: 'SP&AI Lab',
+  university: '창원대학교 정보통신공학과',
+  logo: '/assets/cwnu-symbol.svg', // Logo path
+  avatar: '/assets/cwnu-symbol.svg', // Avatar for SEO/Schema
+  email: 'TODO-lab-contact@cwnu.ac.kr', // Contact email for Join Us page
 
-  // Hero Section (Home Page) - Main content does not need to be translated for 8 languages by default
+  // Hero Section (Home Page) - Main content does not need to be translated for each language by default
   hero: {
-    title: 'Advancing Computer Vision & Deep Learning Research.',
-    subtitle: 'We are the Scholar-Lite Lab.',
+    title: 'Signal Processing & AI Research',
+    subtitle: '창원대학교 정보통신공학과 SP&AI 연구실',
     action: 'View Publications', // Optional call to action text
     image: heroImage, // Hero image path
   },
@@ -39,12 +39,12 @@ export const SITE = {
   // Custom Pages (Appended after 'Join Us')
   customPages: [
     // Example: { text: 'Alumni', link: '/alumni', key: 'alumni' }
-  ],
-  
+  ] as { text: string; link: string; key: string }[],
+
   // i18n Config
   i18n: {
     enabled: true,
-    defaultLocale: 'zh',
+    defaultLocale: 'ko',
   }
 };
 
@@ -62,10 +62,10 @@ export const LOGO_IMAGE = {
 
 export const SOCIALS = [
   {
-    link: 'https://github.com/fjd2004711/scholar-lite',
+    link: 'https://github.com/SPAI-Lab/SPAI_LAB',
     active: true,
   },
 ];
 
 // Default language configuration
-export const DEFAULT_LANG: 'zh' | 'en' | 'ja' | 'ko' | 'fr' | 'de' | 'es' | 'ru' = 'en'; 
+export const DEFAULT_LANG: 'en' | 'ko' = 'ko';

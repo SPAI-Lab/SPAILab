@@ -9,14 +9,14 @@ export const prerender = true;
 ---
 
 <Layout title={t('nav.search')}>
-  <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12 min-h-[60vh]">
-    <div class="text-center mb-8">
-      <h1 class="text-3xl font-bold text-gray-900 mb-4" data-i18n-key="nav.search">{t('nav.search')}</h1>
-      <p class="text-gray-600" data-i18n-key="search.subtitle">{t('search.subtitle') || 'Search through our publications, news, and team members.'}</p>
+  <div class="search-page">
+    <div class="search-page__header">
+      <h1 class="search-page__title" data-i18n-key="nav.search">{t('nav.search')}</h1>
+      <p class="search-page__subtitle" data-i18n-key="search.subtitle">{t('search.subtitle') || 'Search through our publications, news, and team members.'}</p>
     </div>
     
-    <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-      <div id="search" class="w-full"></div>
+    <div class="search-page__box">
+      <div id="search"></div>
     </div>
   </div>
   
@@ -141,27 +141,73 @@ export const prerender = true;
     });
   </script>
   
-  <style is:global>
-    @reference "tailwindcss";
-    
-    /* Custom styling for Pagefind */
-    .pagefind-ui__search-input {
-      @apply rounded-lg border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500;
+  <style lang="scss">
+    @use 'tokens' as *;
+    @use 'mixins' as *;
+
+    .search-page {
+      @include container(narrow);
+      padding-block: 3rem;
+      min-height: 60vh;
     }
-    .pagefind-ui__drawer {
-      @apply gap-4;
+    .search-page__header {
+      text-align: center;
+      margin-bottom: 2rem;
     }
-    .pagefind-ui__result {
-      @apply border-b border-gray-100 py-4 last:border-0;
+    .search-page__title {
+      font-size: 1.875rem;
+      line-height: 2.25rem;
+      font-weight: 700;
+      color: color(gray, 900);
+      margin-bottom: 1rem;
     }
-    .pagefind-ui__result-title {
-      @apply font-semibold text-blue-600 hover:underline;
+    .search-page__subtitle {
+      color: color(gray, 600);
     }
-    .pagefind-ui__result-excerpt {
-      @apply text-gray-600 text-sm mt-1;
+    .search-page__box {
+      background: var(--c-white);
+      padding: 1.5rem;
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+      border: 1px solid color(gray, 100);
     }
-    .pagefind-ui__message {
-      @apply text-gray-500 text-center py-4;
+    #search {
+      width: 100%;
+    }
+
+    // Custom styling for Pagefind (rendered by its own script, so global)
+    :global(.pagefind-ui__search-input) {
+      border-radius: var(--radius-lg);
+      border-color: color(gray, 300);
+      &:focus {
+        outline: none;
+        border-color: color(blue, 500);
+        box-shadow: 0 0 0 2px color(blue, 500);
+      }
+    }
+    :global(.pagefind-ui__drawer) {
+      gap: 1rem;
+    }
+    :global(.pagefind-ui__result) {
+      border-bottom: 1px solid color(gray, 100);
+      padding-block: 1rem;
+      &:last-child { border-bottom: 0; }
+    }
+    :global(.pagefind-ui__result-title) {
+      font-weight: 600;
+      color: color(blue, 600);
+      &:hover { text-decoration: underline; }
+    }
+    :global(.pagefind-ui__result-excerpt) {
+      color: color(gray, 600);
+      font-size: 0.875rem;
+      line-height: 1.25rem;
+      margin-top: 0.25rem;
+    }
+    :global(.pagefind-ui__message) {
+      color: color(gray, 500);
+      text-align: center;
+      padding-block: 1rem;
     }
   </style>
 </Layout>

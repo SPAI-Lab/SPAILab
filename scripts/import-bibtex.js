@@ -132,6 +132,8 @@ function importBibtex() {
     const doi = cleanString(tags.doi || '');
     
     const note = cleanString(tags.note || tags.keywords || '');
+    // BibTeX 'keywords = {a, b; c}' -> search keywords shown on the publications page
+    const keywords = cleanString(tags.keywords || '').split(/[,;]/).map(k => k.trim()).filter(Boolean);
 
     if (note.toLowerCase().includes('best paper') && !award.toLowerCase().includes('best paper')) {
        badges.push({ text: 'Best Paper', type: 'gold' });
@@ -186,6 +188,7 @@ function importBibtex() {
       `  slides: "${slides}"`,
       `  video: "${video}"`,
       doi ? `doi: "${doi}"` : '',
+      keywords.length > 0 ? `keywords: [${keywords.map(k => `"${k.replace(/"/g, '')}"`).join(', ')}]` : '',
       award ? `award: "${award.replace(/"/g, '\\"')}"` : '',
       badges.length > 0 ? 'badges:' : '',
       ...badges.map(b => `  - { text: "${b.text}", type: "${b.type}" }`),

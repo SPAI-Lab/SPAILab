@@ -2,75 +2,108 @@
 import Layout from '../layouts/Layout.astro';
 import { Mail, GraduationCap, BookOpen, Code } from 'lucide-react';
 import { SITE } from '../config';
+import Container from '../components/ui/Container.astro';
+import PageHeader from '../components/ui/PageHeader.astro';
+
+const roles = [
+  {
+    hue: 'blue', Icon: GraduationCap, title: 'PhD Students',
+    text: 'We are looking for PhD students with strong mathematical background and coding skills.',
+    items: ['Strong math foundation', 'Proficient in Python/C++', 'Publication record is a plus'],
+  },
+  {
+    hue: 'green', Icon: BookOpen, title: 'Master Students',
+    text: 'Self-motivated master students who want to dive deep into research are welcome.',
+    items: ['Passion for research', 'Good programming skills', 'Commitment to projects'],
+  },
+  {
+    hue: 'purple', Icon: Code, title: 'Undergraduates',
+    text: 'Talented undergraduates can join us for research training and internship.',
+    items: ['Curiosity driven', 'Fast learner', 'Team player'],
+  },
+];
 ---
 
 <Layout title="Join Us">
-  <div class="max-w-4xl mx-auto px-4 py-12 sm:py-20">
-    <div class="text-center mb-16">
-      <h1 class="text-4xl font-bold text-gray-900 mb-4" data-i18n-key="join.title">Join Us</h1>
-      <p class="text-lg text-gray-600 max-w-2xl mx-auto" data-i18n-key="join.subtitle">
-        We are always looking for motivated students to join our team. If you are interested in our research areas, please contact us!
-      </p>
+  <Container size="narrow" padded>
+    <PageHeader
+      align="center"
+      title="Join Us"
+      titleKey="join.title"
+      subtitle="We are always looking for motivated students to join our team. If you are interested in our research areas, please contact us!"
+      subtitleKey="join.subtitle"
+    />
+
+    <div class="roles">
+      {roles.map(({ hue, Icon, title, text, items }) => (
+        <div class="role">
+          <div class:list={['role__icon', `role__icon--${hue}`]}>
+            <Icon size={24} />
+          </div>
+          <h3 class="role__title">{title}</h3>
+          <p class="role__text">{text}</p>
+          <ul class="role__list">
+            {items.map(item => <li>{item}</li>)}
+          </ul>
+        </div>
+      ))}
     </div>
 
-    <div class="grid gap-8 md:grid-cols-3 mb-16">
-      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 text-blue-600">
-          <GraduationCap className="w-6 h-6" />
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">PhD Students</h3>
-        <p class="text-gray-600 text-sm mb-4">
-          We are looking for PhD students with strong mathematical background and coding skills.
-        </p>
-        <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
-          <li>Strong math foundation</li>
-          <li>Proficient in Python/C++</li>
-          <li>Publication record is a plus</li>
-        </ul>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-green-50 rounded-xl flex items-center justify-center mb-4 text-green-600">
-          <BookOpen className="w-6 h-6" />
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Master Students</h3>
-        <p class="text-gray-600 text-sm mb-4">
-          Self-motivated master students who want to dive deep into research are welcome.
-        </p>
-        <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
-          <li>Passion for research</li>
-          <li>Good programming skills</li>
-          <li>Commitment to projects</li>
-        </ul>
-      </div>
-
-      <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
-        <div class="w-12 h-12 bg-purple-50 rounded-xl flex items-center justify-center mb-4 text-purple-600">
-          <Code className="w-6 h-6" />
-        </div>
-        <h3 class="text-xl font-bold text-gray-900 mb-2">Undergraduates</h3>
-        <p class="text-gray-600 text-sm mb-4">
-          Talented undergraduates can join us for research training and internship.
-        </p>
-        <ul class="text-sm text-gray-600 space-y-2 list-disc list-inside">
-          <li>Curiosity driven</li>
-          <li>Fast learner</li>
-          <li>Team player</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="bg-gray-50 rounded-3xl p-8 sm:p-12 text-center">
-      <h2 class="text-2xl font-bold text-gray-900 mb-4" data-i18n-key="join.howToApply">How to Apply</h2>
-      <p class="text-gray-600 mb-8 max-w-2xl mx-auto" data-i18n-key="join.applicationText">
-        Please send your CV, transcripts, and a brief statement of research interests to our Principal Investigator. 
+    <div class="apply">
+      <h2 class="apply__title" data-i18n-key="join.howToApply">How to Apply</h2>
+      <p class="apply__text" data-i18n-key="join.applicationText">
+        Please send your CV, transcripts, and a brief statement of research interests to our Principal Investigator.
         Make sure to include "[Application]" in your email subject.
       </p>
-      
-      <a href={`mailto:${SITE.email}`} class="inline-flex items-center gap-2 bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-colors">
-        <Mail className="w-5 h-5" />
+
+      <a href={`mailto:${SITE.email}`} class="apply__btn">
+        <Mail size={20} />
         <span data-i18n-key="join.sendEmail">Send Email</span>
       </a>
     </div>
-  </div>
+  </Container>
 </Layout>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .roles {
+    display: grid; gap: 2rem; margin-bottom: 4rem;
+    @include up(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  .role {
+    @include surface(var(--radius-2xl));
+    padding: 1.5rem; box-shadow: var(--shadow-sm);
+    transition: box-shadow 0.15s ease;
+    &:hover { box-shadow: var(--shadow-md); }
+  }
+  .role__icon {
+    width: 3rem; height: 3rem; border-radius: var(--radius-xl);
+    display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
+  }
+  @each $hue in (blue, green, purple) {
+    .role__icon--#{$hue} { background: color($hue, 50); color: color($hue, 600); }
+  }
+  .role__title { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); margin-bottom: 0.5rem; }
+  .role__text { color: color(gray, 600); font-size: 0.875rem; line-height: 1.25rem; margin-bottom: 1rem; }
+  .role__list {
+    font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 600);
+    list-style: disc inside;
+    li + li { margin-top: 0.5rem; }
+  }
+
+  .apply {
+    background: color(gray, 50); border-radius: 1.5rem; padding: 2rem; text-align: center;
+    @include up(sm) { padding: 3rem; }
+  }
+  .apply__title { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: color(gray, 900); margin-bottom: 1rem; }
+  .apply__text { color: color(gray, 600); margin-bottom: 2rem; max-width: 42rem; margin-inline: auto; }
+  .apply__btn {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: color(blue, 600); color: var(--c-white);
+    padding: 0.75rem 2rem; border-radius: var(--radius-full); font-weight: 500;
+    transition: background-color 0.15s ease;
+    &:hover { background: color(blue, 700); }
+  }
+</style>

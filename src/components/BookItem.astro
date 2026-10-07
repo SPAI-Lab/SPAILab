@@ -10,28 +10,21 @@ const { entry } = Astro.props;
 const { title, authors, year, venue, links, cover, badges } = entry.data;
 ---
 
-<div class="group bg-white rounded-xl border border-gray-100 overflow-hidden hover:shadow-lg transition-all duration-300 flex flex-col h-full">
-  <div class="relative aspect-[3/4] overflow-hidden bg-gray-100">
+<div class="book">
+  <div class="book__cover">
     {cover ? (
-      <Image 
-        src={cover} 
-        alt={title} 
-        class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-      />
+      <Image src={cover} alt={title} />
     ) : (
-      <div class="w-full h-full flex items-center justify-center text-gray-400 bg-gray-50">
-        <span class="text-sm">No Cover</span>
+      <div class="book__nocover">
+        <span>No Cover</span>
       </div>
     )}
-    
+
     {/* Badges Overlay */}
     {badges && badges.length > 0 && (
-      <div class="absolute top-2 right-2 flex flex-col gap-1 items-end">
+      <div class="book__badges">
         {badges.map(badge => (
-          <span class={`px-2 py-1 text-xs font-bold rounded shadow-sm backdrop-blur-md
-            ${badge.type === 'gold' ? 'bg-yellow-100/90 text-yellow-700 border border-yellow-200' : 
-              badge.type === 'blue' ? 'bg-blue-100/90 text-blue-700 border border-blue-200' : 
-              'bg-gray-100/90 text-gray-700 border border-gray-200'}`}>
+          <span class:list={['badge', { 'badge--gold': badge.type === 'gold', 'badge--blue': badge.type === 'blue' }]}>
             {badge.text}
           </span>
         ))}
@@ -39,37 +32,79 @@ const { title, authors, year, venue, links, cover, badges } = entry.data;
     )}
   </div>
 
-  <div class="p-5 flex flex-col flex-grow">
-    <div class="mb-4">
-      <h3 class="text-lg font-bold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors mb-2">
-        {title}
-      </h3>
-      <p class="text-sm text-gray-600 leading-relaxed">
-        {authors.join(', ')}
-      </p>
+  <div class="book__body">
+    <div class="book__text">
+      <h3>{title}</h3>
+      <p>{authors.join(', ')}</p>
     </div>
 
-    <div class="mt-auto pt-4 border-t border-gray-50 flex items-center justify-between text-sm">
-      <div class="flex items-center gap-2 text-gray-500">
-        <span class="font-medium text-gray-900">{venue}</span>
+    <div class="book__footer">
+      <div class="book__venue">
+        <span class="book__venue-name">{venue}</span>
         <span>•</span>
         <time>{year}</time>
       </div>
-      
+
       {links && (links.website || links.pdf) && (
-        <div class="flex gap-2">
+        <div class="book__links">
           {links.website && (
-            <a href={links.website} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-medium">
-              Website
-            </a>
+            <a href={links.website} target="_blank" rel="noopener noreferrer">Website</a>
           )}
           {links.pdf && (
-            <a href={links.pdf} target="_blank" rel="noopener noreferrer" class="text-blue-600 hover:text-blue-800 font-medium">
-              PDF
-            </a>
+            <a href={links.pdf} target="_blank" rel="noopener noreferrer">PDF</a>
           )}
         </div>
       )}
     </div>
   </div>
 </div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .book {
+    @include surface;
+    display: flex; flex-direction: column; height: 100%; overflow: hidden;
+    transition: box-shadow 0.3s;
+    &:hover { box-shadow: var(--shadow-lg); }
+  }
+  .book__cover {
+    position: relative; aspect-ratio: 3 / 4; overflow: hidden; background: color(gray, 100);
+    :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  }
+  .book:hover .book__cover :global(img) { transform: scale(1.05); }
+  .book__nocover {
+    width: 100%; height: 100%; display: flex; align-items: center; justify-content: center;
+    color: color(gray, 400); background: color(gray, 50);
+    span { font-size: 0.875rem; line-height: 1.25rem; }
+  }
+
+  .book__badges { position: absolute; top: 0.5rem; right: 0.5rem; display: flex; flex-direction: column; gap: 0.25rem; align-items: flex-end; }
+  .badge {
+    padding: 0.25rem 0.5rem; font-size: 0.75rem; line-height: 1rem; font-weight: 700;
+    border-radius: var(--radius-sm); box-shadow: var(--shadow-sm); backdrop-filter: blur(12px);
+    background: rgb(243 244 246 / 0.9); color: color(gray, 700); border: 1px solid color(gray, 200);
+  }
+  .badge--gold { background: rgb(254 249 195 / 0.9); color: color(yellow, 700); border-color: color(yellow, 200); }
+  .badge--blue { background: rgb(219 234 254 / 0.9); color: color(blue, 700); border-color: color(blue, 200); }
+
+  .book__body { padding: 1.25rem; display: flex; flex-direction: column; flex-grow: 1; }
+  .book__text { margin-bottom: 1rem; }
+  h3 {
+    font-size: 1.125rem; line-height: 1.25; font-weight: 700; color: color(gray, 900);
+    margin-bottom: 0.5rem; transition: color 0.15s;
+  }
+  .book:hover h3 { color: color(blue, 600); }
+  p { font-size: 0.875rem; line-height: 1.625; color: color(gray, 600); }
+
+  .book__footer {
+    margin-top: auto; padding-top: 1rem; border-top: 1px solid color(gray, 50);
+    display: flex; align-items: center; justify-content: space-between;
+    font-size: 0.875rem; line-height: 1.25rem;
+  }
+  .book__venue { display: flex; align-items: center; gap: 0.5rem; color: color(gray, 500); }
+  .book__venue-name { font-weight: 500; color: color(gray, 900); }
+  .book__links { display: flex; gap: 0.5rem; }
+  .book__links a { color: color(blue, 600); font-weight: 500; &:hover { color: color(blue, 800); } }
+</style>

@@ -1,0 +1,39 @@
+---
+import { ScrollText } from 'lucide-react';
+import StatusBadge from './StatusBadge.astro';
+interface Props { title: string; inventors: string[]; number: string; date: Date; status: string; }
+const { title, inventors, number, date, status } = Astro.props;
+---
+<div class="patent">
+  <div class="patent__icon"><ScrollText size={24} /></div>
+  <div class="patent__main">
+    <div class="patent__head">
+      <h3>{title}</h3>
+      <StatusBadge status={status} />
+    </div>
+    <div class="patent__inventors">
+      <span class="patent__label" data-i18n-key="achievements.inventors">Inventors:</span> {inventors.join(', ')}
+    </div>
+    <div class="patent__meta">
+      <span class="patent__number">{number}</span>
+      <time>{date.toLocaleDateString()}</time>
+    </div>
+  </div>
+</div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+  .patent { @include surface; padding: 1.5rem; display: flex; gap: 1rem; box-shadow: var(--shadow-sm); transition: box-shadow 0.2s ease; &:hover { box-shadow: var(--shadow-md); } }
+  .patent__icon { align-self: flex-start; display: flex; flex-shrink: 0; padding: 0.75rem; background: color(amber, 50); color: color(amber, 600); border-radius: var(--radius-lg); }
+  .patent__main { flex-grow: 1; }
+  .patent__head {
+    display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem;
+    @include up(sm) { flex-direction: row; align-items: center; }
+  }
+  h3 { font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); }
+  .patent__inventors { font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 600); margin-bottom: 0.5rem; }
+  .patent__label { font-weight: 500; color: color(gray, 900); }
+  .patent__meta { display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 500); }
+  .patent__number { font-family: var(--font-mono); background: color(gray, 50); padding: 0.125rem 0.5rem; border-radius: var(--radius-sm); border: 1px solid color(gray, 200); }
+</style>

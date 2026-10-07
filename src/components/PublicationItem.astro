@@ -19,13 +19,8 @@ const iconMap: Record<string, any> = {
   website: Globe,
 };
 
-const badgeStyles: Record<string, string> = {
-  gold: "bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border-amber-200 shadow-sm",
-  blue: "bg-blue-50 text-blue-700 border-blue-100",
-  red: "bg-rose-50 text-rose-700 border-rose-100",
-  green: "bg-emerald-50 text-emerald-700 border-emerald-100",
-  default: "bg-gray-50 text-gray-700 border-gray-200"
-};
+const badgeTypes = ['gold', 'blue', 'red', 'green'];
+const badgeClass = (type: string) => badgeTypes.includes(type) ? type : 'default';
 
 // Helper to format link label (e.g., "pdf" -> "PDF")
 const formatLabel = (key: string) => {
@@ -36,59 +31,55 @@ const formatLabel = (key: string) => {
 };
 ---
 
-<div class="flex flex-col sm:flex-row gap-6 py-8 border-b border-gray-100 last:border-0 group">
+<div class="pub">
   {cover && (
-    <div class="shrink-0 w-full sm:w-48 h-32 sm:h-28 rounded-lg overflow-hidden border border-gray-100 bg-gray-50">
-      <Image src={cover} alt={title} class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" quality={80} format="webp" width={300} />
+    <div class="pub__cover">
+      <Image src={cover} alt={title} quality={80} format="webp" width={300} />
     </div>
   )}
-  
-  <div class="flex-grow space-y-2">
+
+  <div class="pub__body">
     <!-- Title -->
-    <h3 class="text-lg font-semibold text-gray-900 leading-tight group-hover:text-blue-600 transition-colors">
+    <h3 class="pub__title">
       {links?.website ? <a href={links.website} target="_blank">{title}</a> : (links?.pdf ? <a href={links.pdf} target="_blank">{title}</a> : title)}
     </h3>
-    
+
     <!-- Authors -->
-    <div class="text-gray-600 text-sm leading-relaxed">
+    <div class="pub__authors">
       {authors.join(', ')}
     </div>
-    
+
     <!-- Venue & Year & Badges -->
-    <div class="flex items-center flex-wrap gap-2 text-sm text-gray-500">
-      <span class="font-medium text-gray-800">{venue}</span>
+    <div class="pub__meta">
+      <span class="pub__venue">{venue}</span>
       <span>·</span>
       <span>{year}</span>
-      
+
       {/* Legacy award support (fallback) */}
       {award && !badges && (
-        <span class="px-2 py-0.5 rounded-full bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 text-xs font-medium border border-amber-200 flex items-center gap-1 shadow-sm">
-          <Sparkles class="w-3 h-3" /> {award}
+        <span class="badge badge--gold">
+          <Sparkles size={12} /> {award}
         </span>
       )}
 
       {/* New Badges System */}
       {badges && badges.map(badge => (
-        <span class={`px-2 py-0.5 rounded-full text-xs font-medium border flex items-center gap-1 ${badgeStyles[badge.type] || badgeStyles.default}`}>
-           {badge.type === 'gold' && <Sparkles class="w-3 h-3" />}
-           {badge.text}
+        <span class:list={['badge', `badge--${badgeClass(badge.type)}`]}>
+          {badge.type === 'gold' && <Sparkles size={12} />}
+          {badge.text}
         </span>
       ))}
     </div>
-    
+
     <!-- Links -->
     {links && Object.keys(links).length > 0 && (
-      <div class="flex flex-wrap gap-3 pt-1">
+      <div class="pub__links">
         {Object.entries(links).map(([key, url]) => {
           if (!url || url === '#') return null;
           const Icon = iconMap[key] || ExternalLink;
           return (
-            <a 
-              href={url}
-              target="_blank"
-              class="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-gray-600 border border-gray-200 rounded-md hover:text-blue-600 hover:border-blue-200 hover:bg-blue-50 transition-all"
-            >
-              <Icon className="w-3.5 h-3.5" />
+            <a href={url} target="_blank" class="pub__link">
+              <Icon size={14} />
               {formatLabel(key)}
             </a>
           );
@@ -97,3 +88,58 @@ const formatLabel = (key: string) => {
     )}
   </div>
 </div>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .pub {
+    display: flex; flex-direction: column; gap: 1.5rem;
+    padding-block: 2rem; border-bottom: 1px solid color(gray, 100);
+    &:last-child { border-bottom: 0; }
+    @include up(sm) { flex-direction: row; }
+  }
+  .pub__cover {
+    flex-shrink: 0; width: 100%; height: 8rem; overflow: hidden;
+    border-radius: var(--radius-lg); border: 1px solid color(gray, 100); background: color(gray, 50);
+    @include up(sm) { width: 12rem; height: 7rem; }
+    :global(img) { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+  }
+  .pub:hover .pub__cover :global(img) { transform: scale(1.05); }
+
+  .pub__body { flex-grow: 1; > * + * { margin-top: 0.5rem; } }
+  .pub__title {
+    font-size: 1.125rem; line-height: 1.25; font-weight: 600; color: color(gray, 900);
+    transition: color 0.15s;
+  }
+  .pub:hover .pub__title { color: color(blue, 600); }
+  .pub__authors { color: color(gray, 600); font-size: 0.875rem; line-height: 1.625; }
+
+  .pub__meta {
+    display: flex; align-items: center; flex-wrap: wrap; gap: 0.5rem;
+    font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 500);
+  }
+  .pub__venue { font-weight: 500; color: color(gray, 800); }
+
+  .badge {
+    display: flex; align-items: center; gap: 0.25rem;
+    padding: 0.125rem 0.5rem; border-radius: var(--radius-full);
+    font-size: 0.75rem; line-height: 1rem; font-weight: 500; border: 1px solid;
+    :global(svg) { @include icon(0.75rem); }
+  }
+  .badge--gold { background: linear-gradient(to right, color(amber, 50), color(yellow, 50)); color: color(amber, 700); border-color: color(amber, 200); box-shadow: var(--shadow-sm); }
+  .badge--blue { background: color(blue, 50); color: color(blue, 700); border-color: color(blue, 100); }
+  .badge--red { background: color(rose, 50); color: color(rose, 700); border-color: color(rose, 100); }
+  .badge--green { background: color(emerald, 50); color: color(emerald, 700); border-color: color(emerald, 100); }
+  .badge--default { background: color(gray, 50); color: color(gray, 700); border-color: color(gray, 200); }
+
+  .pub__links { display: flex; flex-wrap: wrap; gap: 0.75rem; padding-top: 0.25rem; }
+  .pub__link {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    padding: 0.25rem 0.75rem; font-size: 0.75rem; line-height: 1rem; font-weight: 500;
+    color: color(gray, 600); border: 1px solid color(gray, 200); border-radius: var(--radius-md);
+    transition: all 0.15s;
+    &:hover { color: color(blue, 600); border-color: color(blue, 200); background: color(blue, 50); }
+    :global(svg) { @include icon(0.875rem); }
+  }
+</style>

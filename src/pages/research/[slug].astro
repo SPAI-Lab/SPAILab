@@ -1,6 +1,9 @@
 ---
 import Layout from '../../layouts/Layout.astro';
 import { getCollection, render } from 'astro:content';
+import Container from '../../components/ui/Container.astro';
+import BackLink from '../../components/ui/BackLink.astro';
+import Prose from '../../components/ui/Prose.astro';
 
 export async function getStaticPaths() {
   const researchAreas = await getCollection('research');
@@ -15,23 +18,38 @@ const { Content } = await render(area);
 ---
 
 <Layout title={area.data.title}>
-  <article class="max-w-4xl mx-auto px-4 py-12 sm:py-20">
-    <a href="/research" class="inline-flex items-center text-sm text-gray-500 hover:text-blue-600 mb-8 transition-colors">
-      &larr; Back to Research
-    </a>
+  <Container size="narrow" padded>
+    <article>
+      <BackLink href="/research">Back to Research</BackLink>
 
-    <header class="mb-12">
-      <h1 class="text-4xl font-bold text-gray-900 mb-6">{area.data.title}</h1>
-      {area.data.cover && (
-        <div class="w-full h-64 sm:h-96 rounded-2xl overflow-hidden bg-gray-100 mb-8">
-          <img src={area.data.cover.src} alt={area.data.title} class="w-full h-full object-cover" />
-        </div>
-      )}
-      <p class="text-xl text-gray-600 leading-relaxed">{area.data.description}</p>
-    </header>
+      <header class="article__header">
+        <h1 class="article__title">{area.data.title}</h1>
+        {area.data.cover && (
+          <div class="article__cover">
+            <img src={area.data.cover.src} alt={area.data.title} />
+          </div>
+        )}
+        <p class="article__lead">{area.data.description}</p>
+      </header>
 
-    <div class="prose prose-lg prose-blue max-w-none text-gray-700">
-      <Content />
-    </div>
-  </article>
+      <Prose>
+        <Content />
+      </Prose>
+    </article>
+  </Container>
 </Layout>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .article__header { margin-bottom: 3rem; }
+  .article__title { font-size: 2.25rem; line-height: 2.5rem; font-weight: 700; color: color(gray, 900); margin-bottom: 1.5rem; }
+  .article__cover {
+    width: 100%; height: 16rem; border-radius: var(--radius-2xl); overflow: hidden;
+    background: color(gray, 100); margin-bottom: 2rem;
+    @include up(sm) { height: 24rem; }
+    img { width: 100%; height: 100%; object-fit: cover; }
+  }
+  .article__lead { font-size: 1.25rem; line-height: 1.625; color: color(gray, 600); }
+</style>

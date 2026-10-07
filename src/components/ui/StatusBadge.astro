@@ -1,0 +1,21 @@
+---
+import { CheckCircle, Clock, FileInput } from 'lucide-react';
+// Patent status pill: Granted (green) | Pending (amber) | Filed / other (gray)
+interface Props { status: string; }
+const { status } = Astro.props;
+const mod = status === 'Granted' ? 'granted' : status === 'Pending' ? 'pending' : 'default';
+---
+<span class:list={['status', `status--${mod}`]}>
+  {status === 'Granted' && <CheckCircle size={12} />}
+  {status === 'Pending' && <Clock size={12} />}
+  {status === 'Filed' && <FileInput size={12} />}
+  {status}
+</span>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+  .status { @include pill(gray); color: color(gray, 600); }
+  .status--granted { @include pill(green); }
+  .status--pending { @include pill(amber); }
+</style>
