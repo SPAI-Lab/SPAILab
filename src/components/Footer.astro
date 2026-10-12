@@ -1,18 +1,89 @@
 ---
+import { ArrowUpRight } from 'lucide-react';
+import { url } from '../lib/url';
+import { SITE, SOCIALS } from '../config';
 import Container from './ui/Container.astro';
-import { SITE } from '../config';
+
+const github = SOCIALS.find(s => s.active)?.link;
 ---
 <footer class="footer">
   <Container>
-    <p>© {new Date().getFullYear()} {SITE.labName}, {SITE.university}</p>
-    <p class="credit">
-      Built with <a href="https://github.com/fjd2004711/scholar-lite" target="_blank" rel="noopener">Scholar-Lite</a> (MIT)
-    </p>
+    <div class="footer__row">
+      <a href={url('/')} class="footer__brand" aria-label={SITE.labName}>
+        <span class="footer__name">SP<span class="footer__amp">&amp;</span>AI</span>
+        <span class="footer__univ">{SITE.university}</span>
+      </a>
+
+      <div class="footer__info">
+        <p class="footer__address" data-i18n-key="footer.address">{SITE.address}</p>
+        <ul class="footer__line">
+          {SITE.locations.map(loc => <li data-i18n-key={loc.key}>{loc.text}</li>)}
+        </ul>
+        <ul class="footer__line">
+          <li><a href={`mailto:${SITE.email}`}>{SITE.email}</a></li>
+          <li><a href={`tel:${SITE.phone}`}>{SITE.phone}</a></li>
+        </ul>
+        <p class="footer__copy">© {new Date().getFullYear()} {SITE.labName}. All rights reserved.</p>
+      </div>
+
+      <div class="footer__links">
+        <a href={SITE.deptUrl} target="_blank" rel="noopener noreferrer" class="footer__btn">
+          <span data-i18n-key="footer.dept">Department site</span>
+          <ArrowUpRight size={16} />
+        </a>
+        {github && (
+          <a href={github} target="_blank" rel="noopener noreferrer" class="footer__btn">
+            <span>GitHub</span>
+            <ArrowUpRight size={16} />
+          </a>
+        )}
+      </div>
+    </div>
   </Container>
 </footer>
 
 <style lang="scss">
   @use 'tokens' as *;
-  .footer { border-top: 1px solid color(gray, 100); padding-block: 2rem; margin-top: 3rem; background: color(gray, 50); text-align: center; font-size: 0.875rem; color: color(gray, 500); }
-  .credit { margin-top: 0.25rem; font-size: 0.75rem; color: color(gray, 400); a:hover { color: color(gray, 700); } }
+  @use 'mixins' as *;
+
+  // Dark band so the footer reads as its own region, separated from the page content.
+  .footer {
+    margin-top: 4rem;
+    padding-block: 0 2.5rem;
+    background: #232323;
+    color: color(gray, 400);
+    font-size: 0.875rem;
+    line-height: 1.7;
+    word-break: keep-all;
+  }
+
+  .footer__row {
+    display: grid; gap: 1.75rem;
+    padding-top: 2rem; border-top: 1px solid rgb(255 255 255 / 0.18);
+    margin-top: 2.5rem;
+
+    @include up(md) { grid-template-columns: auto 1fr auto; align-items: start; gap: 2.5rem; }
+  }
+
+  .footer__brand { display: grid; gap: 0.125rem; }
+  .footer__name { font-family: var(--font-mono); font-size: 1.875rem; font-weight: 800; letter-spacing: -0.04em; line-height: 1.1; color: var(--c-white); }
+  .footer__amp { color: color(red, 500); }
+  .footer__univ { font-size: 0.75rem; color: color(gray, 400); }
+
+  .footer__info { display: grid; gap: 0.125rem; }
+  .footer__address { margin: 0; font-weight: 600; color: color(gray, 100); }
+  .footer__line {
+    list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0 1.25rem;
+    a:hover { color: var(--c-white); text-decoration: underline; }
+  }
+  .footer__copy { margin: 0.5rem 0 0; font-size: 0.8125rem; color: color(gray, 500); }
+
+  .footer__links { display: flex; flex-wrap: wrap; gap: 0.75rem; @include up(md) { flex-direction: column; align-items: stretch; min-width: 12rem; } }
+  .footer__btn {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    padding: 0.625rem 1rem; border: 1px solid rgb(255 255 255 / 0.5);
+    color: var(--c-white); transition: all 0.15s ease;
+    &:hover { background: var(--c-white); color: #232323; }
+    &:focus-visible { outline: 2px solid color(red, 500); outline-offset: 2px; }
+  }
 </style>

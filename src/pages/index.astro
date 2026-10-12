@@ -7,11 +7,23 @@ import { Calendar } from 'lucide-react';
 import { SITE } from '../config';
 import Container from '../components/ui/Container.astro';
 import SectionHeaderLink from '../components/ui/SectionHeaderLink.astro';
+import HeroWave from '../components/HeroWave.astro';
 
-const papers = (await getCollection('publications'))
-  .filter(p => p.data.type === 'paper' && p.data.featured)
-  .sort((a, b) => b.data.year - a.data.year)
-  .slice(0, 3);
+const allPubs = await getCollection('publications');
+const allPapers = allPubs
+  .filter(p => p.data.type === 'paper')
+  .sort((a, b) => b.data.year - a.data.year);
+// Featured papers first; if none are flagged, fall back to the latest ones.
+const featured = allPapers.filter(p => p.data.featured);
+const papers = (featured.length > 0 ? featured : allPapers).slice(0, 3);
+
+const researchCount = (await getCollection('research')).length;
+// Numbers with no data behind them are dropped instead of showing 0 / Infinity.
+const stats = [
+  { value: allPapers.length, key: 'hero.stat.papers', label: 'Publications' },
+  { value: researchCount, key: 'hero.stat.areas', label: 'Research areas' },
+  { value: allPubs.length > 0 ? Math.min(...allPubs.map(p => p.data.year)) : 0, key: 'hero.stat.since', label: 'Publishing since' },
+].filter(stat => stat.value > 0);
 
 const activities = (await getCollection('activities'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -21,37 +33,20 @@ const activities = (await getCollection('activities'))
 <Layout title="Home">
   <!-- Hero Section -->
   <section class="hero">
-    <!-- Background Image -->
+    <!-- Background: reactive waveform (echoes the lab logo) -->
     <div class="hero__bg">
-      {SITE.hero.image ? (
-        <Image
-          src={SITE.hero.image}
-          alt={SITE.hero.title}
-          loading="eager"
-          fetchpriority="high"
-          decoding="sync"
-          quality={60}
-          format="webp"
-          widths={[640, 1024, 1920]}
-          sizes="100vw"
-        />
-      ) : (
-        <div class="hero__fallback"></div>
-      )}
-      <!-- Dark Gradient Overlay for Readability -->
+      <HeroWave />
+      <!-- Soft left fade keeps the headline readable over the bars -->
       <div class="hero__overlay"></div>
-      <!-- Subtle Texture (CSS only) -->
-      <div class="hero__texture"></div>
     </div>
 
     <!-- Content -->
     <div class="hero__content">
       <Container>
         <div class="hero__inner">
-          <h1 class="hero__title">
-            <span>{SITE.hero.title}</span>
-          </h1>
-          <p class="hero__subtitle">
+          <p class="hero__eyebrow" data-i18n-key="hero.eyebrow">{SITE.hero.eyebrow}</p>
+          <h1 class="hero__title" aria-label={SITE.hero.title}>SP<span class="hero__amp">&amp;</span>AI</h1>
+          <p class="hero__subtitle" data-i18n-key="hero.subtitle">
             {SITE.hero.subtitle}
           </p>
           <div class="hero__actions">
@@ -62,6 +57,16 @@ const activities = (await getCollection('activities'))
               Meet the Team
             </a>
           </div>
+          {stats.length > 0 && (
+          <dl class="hero__stats">
+            {stats.map(stat => (
+              <div class="hero__stat">
+                <dt data-i18n-key={stat.key}>{stat.label}</dt>
+                <dd data-count={stat.value} data-nogroup={stat.key === 'hero.stat.since' ? '' : undefined}>{stat.value}</dd>
+              </div>
+            ))}
+          </dl>
+          )}
         </div>
       </Container>
     </div>
@@ -75,6 +80,7 @@ const activities = (await getCollection('activities'))
   </section>
 
   <!-- Selected Publications -->
+  {papers.length > 0 && (
   <section class="section section--gray">
     <Container>
       <SectionHeaderLink title="Selected Publications" titleKey="section.selectedPubs" href="/achievements" />
@@ -121,11 +127,13 @@ const activities = (await getCollection('activities'))
       </div>
     </Container>
   </section>
+  )}
 
   <!-- Latest Activities -->
+  {activities.length > 0 && (
   <section class="section">
     <Container>
-      <SectionHeaderLink title="Latest Activities" titleKey="section.latestNews" href="/activities" />
+      <SectionHeaderLink title="Latest Activities" titleKey="section.latestActivities" href="/activities" />
 
       <div class="grid grid--activities">
         {activities.map(item => {
@@ -159,7 +167,31 @@ const activities = (await getCollection('activities'))
       </div>
     </Container>
   </section>
+  )}
 </Layout>
+
+<script>
+  // Count-up for the hero numbers; skipped for reduced-motion.
+  const els = document.querySelectorAll<HTMLElement>('.hero__stat dd[data-count]');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (!reduce) {
+    els.forEach(el => {
+      const end = Number(el.dataset.count);
+      const noGroup = 'nogroup' in el.dataset;
+      // Years count up from a nearby value instead of 0 so it doesn't flash "0".
+      const start = noGroup ? end - 40 : 0;
+      const t0 = performance.now();
+      const dur = 1200;
+      const tick = (now: number) => {
+        const p = Math.min(1, (now - t0) / dur);
+        const eased = 1 - (1 - p) ** 3;
+        el.textContent = String(Math.round(start + (end - start) * eased));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }
+</script>
 
 <style lang="scss">
   @use 'tokens' as *;
@@ -175,21 +207,28 @@ const activities = (await getCollection('activities'))
     :global(img) { width: 100%; height: 100%; object-fit: cover; }
   }
   .hero__fallback { width: 100%; height: 100%; background: linear-gradient(to bottom right, color(gray, 900), color(gray, 800)); }
-  .hero__overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgb(0 0 0 / 0.9), rgb(0 0 0 / 0.5), transparent); }
+  .hero__overlay { position: absolute; inset: 0; background: linear-gradient(to right, rgb(10 10 13 / 0.85), rgb(10 10 13 / 0.35) 45%, transparent 70%); pointer-events: none; }
   .hero__texture {
     position: absolute; inset: 0; opacity: 0.03;
     background-image: radial-gradient(#ffffff 1px, transparent 1px); background-size: 32px 32px;
   }
   .hero__content { position: relative; z-index: 10; width: 100%; }
   .hero__inner { max-width: 48rem; }
+  .hero__eyebrow {
+    margin-bottom: 1.25rem; font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 600;
+    letter-spacing: 0.14em; text-transform: uppercase; color: color(red, 400);
+    &::before { content: ''; display: inline-block; width: 2rem; height: 2px; margin-right: 0.75rem; vertical-align: middle; background: currentColor; }
+    @include up(sm) { font-size: 0.875rem; }
+  }
   .hero__title {
-    font-size: 3rem; line-height: 1.25; font-weight: 800; color: var(--c-white);
-    margin-bottom: 1.5rem;
+    font-family: var(--font-mono); letter-spacing: -0.04em;
+    font-size: clamp(3.5rem, 11vw, 7rem); line-height: 1; font-weight: 800; color: var(--c-white);
+    margin-bottom: 0.5rem;
     filter: drop-shadow(0 10px 8px rgb(0 0 0 / 0.04)) drop-shadow(0 4px 3px rgb(0 0 0 / 0.1));
     @include up(sm) { font-size: 3.75rem; }
     @include up(md) { font-size: 4.5rem; }
-    span { display: block; @include up(xl) { display: inline; } }
   }
+  .hero__amp { color: color(red, 500); margin-inline: -0.03em; }
   .hero__subtitle {
     margin-top: 1rem; font-size: 1.25rem; line-height: 1.75rem; color: color(gray, 300);
     filter: drop-shadow(0 4px 3px rgb(0 0 0 / 0.07)) drop-shadow(0 2px 2px rgb(0 0 0 / 0.06));
@@ -203,13 +242,25 @@ const activities = (await getCollection('activities'))
     border-radius: var(--radius-full); transition: all 0.3s ease;
   }
   .hero__btn--primary {
-    border: 1px solid transparent; color: var(--c-black); background: var(--c-white);
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-    &:hover { background: color(gray, 100); box-shadow: 0 0 30px rgba(255, 255, 255, 0.5); }
+    border: 1px solid transparent; color: var(--c-white); background: color(red, 600);
+    box-shadow: 0 0 24px rgb(220 38 38 / 0.45);
+    &:hover { background: color(red, 500); box-shadow: 0 0 34px rgb(239 68 68 / 0.6); }
+    &:focus-visible { outline: 3px solid var(--c-white); outline-offset: 3px; }
   }
   .hero__btn--secondary {
     border: 2px solid rgb(255 255 255 / 0.3); color: var(--c-white); backdrop-filter: blur(4px);
     &:hover { background: rgb(255 255 255 / 0.1); }
+  }
+  .hero__stats {
+    margin-top: 3rem; display: flex; flex-wrap: wrap; gap: 1.5rem 3rem;
+    padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.14); max-width: 34rem;
+  }
+  .hero__stat {
+    dt { font-size: 0.8125rem; letter-spacing: 0.04em; text-transform: uppercase; color: color(gray, 400); }
+    dd {
+      margin-top: 0.25rem; font-family: var(--font-mono); font-size: 2rem; line-height: 2.25rem;
+      font-weight: 700; color: var(--c-white); font-variant-numeric: tabular-nums;
+    }
   }
   .hero__scroll {
     position: absolute; bottom: 2rem; left: 50%;

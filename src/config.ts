@@ -15,23 +15,33 @@ export const SITE = {
   university: '창원대학교 정보통신공학과',
   logo: '/assets/cwnu-symbol.svg', // Logo path
   avatar: '/assets/cwnu-symbol.svg', // Avatar for SEO/Schema
-  email: 'TODO-lab-contact@cwnu.ac.kr', // Contact email for Join Us page
+  // Physical locations (shown in the footer and on the Join page)
+  locations: [
+    { key: 'location.student', text: 'Student Lab: Bldg. 51, Room 328' },
+    { key: 'location.professor', text: "Professor's Office: Bldg. 51, Room 320" },
+  ],
+  // Contact (source: department staff page, changwon.ac.kr/it)
+  email: 'jwseok@changwon.ac.kr', // Principal Investigator; used by the Join Us page and footer
+  phone: '055-213-3836',
+  deptUrl: 'https://www.changwon.ac.kr/it/', // Department of Information and Communication Engineering
+  address: '(51140) 경남 창원시 의창구 창원대학로 20 공과대학 정보통신공학과',
 
   // Hero Section (Home Page) - Main content does not need to be translated for each language by default
   hero: {
-    title: 'Signal Processing & AI Research',
-    subtitle: '창원대학교 정보통신공학과 SP&AI 연구실',
+    title: 'SP&AI',
+    subtitle: 'Sonar, audio and multimedia signal processing, powered by deep learning.',
+    eyebrow: 'Signal Processing & AI Laboratory',
     action: 'View Publications', // Optional call to action text
     image: heroImage, // Hero image path
   },
 
   // Navigation
   nav: [
-    { text: 'Home', link: '/', key: 'home' },
     { text: 'Research', link: '/research', key: 'research' },
     { text: 'Achievements', link: '/achievements', key: 'achievements' },
     { text: 'Team', link: '/team', key: 'team' },
     { text: 'Activities', link: '/activities', key: 'activities' },
+    { text: 'Writing', link: '/writing', key: 'writing' },
     { text: 'Join Us', link: '/join', key: 'join' },
     { text: 'Search', link: '/search', key: 'search' },
   ],
@@ -62,7 +72,7 @@ export const LOGO_IMAGE = {
 
 export const SOCIALS = [
   {
-    link: 'https://github.com/SPAI-Lab/SPAILab',
+    link: 'https://github.com/SPAI-Lab',
     active: true,
   },
 ];

@@ -68,6 +68,9 @@ const team = defineCollection({
     avatarUrl: z.string().url().optional(), // external image URL (takes priority over avatar)
     bio: z.string().optional(), // Short bio for card
     email: z.string().optional(),
+    phone: z.string().optional(),
+    office: z.string().optional(), // e.g. 51호관 320호
+    lab: z.string().optional(), // e.g. 51호관 328호
     website: z.string().optional(),
     linkedin: z.string().optional(),
     github: z.string().optional(),
@@ -102,6 +105,7 @@ const patents = defineCollection({
     title: z.string(),
     inventors: z.array(z.string()),
     number: z.string(), // Patent Number
+    assignee: z.string().optional(), // e.g. 창원대학교 산학협력단
     date: z.date(),
     status: z.enum(['Granted', 'Pending', 'Filed']),
     link: z.string().optional(),
@@ -141,6 +145,19 @@ const activities = defineCollection({
   }),
 });
 
+// Lab writing: drop a .md file into src/content/writing and push to git — the page is generated at build time.
+const writing = defineCollection({
+  loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/writing" }),
+  schema: z.object({
+    title: z.string(),
+    date: z.date(),
+    author: z.string(),
+    summary: z.string().optional(),
+    tags: z.array(z.string()).default([]),
+    draft: z.boolean().default(false), // draft: true → hidden from the list and not built
+  }),
+});
+
 export const collections = {
   publications,
   books,
@@ -151,4 +168,5 @@ export const collections = {
   softwares,
   honors,
   activities,
+  writing,
 };

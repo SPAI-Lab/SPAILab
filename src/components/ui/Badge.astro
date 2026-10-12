@@ -14,6 +14,6 @@ const { hue = 'gray', bold = false, class: className } = Astro.props;
   .badge { @include pill(gray); }
   .badge--bold { font-weight: 700; }
   @each $hue in (blue, green, amber, red, purple, rose, emerald, orange, indigo) {
-    .badge--#{$hue} { @include pill($hue); }
+    .badge--#{"" + $hue} { @include pill($hue); }
   }
 </style>
