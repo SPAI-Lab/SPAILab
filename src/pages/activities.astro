@@ -23,7 +23,9 @@ const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() 
       />
     </div>
 
-    <!-- Activities Gallery -->
+    <!-- Activities gallery: hidden while src/content/activities is empty -->
+    {activities.length > 0 && (
+      <>
     <h2 class="activities__heading" data-i18n-key="nav.activities">Activities</h2>
     <div class="activities__grid">
       {activities.map(activity => (
@@ -49,14 +51,13 @@ const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() 
           </div>
         </a>
       ))}
-      {activities.length === 0 && (
-        <div class="activities__empty">
-          <EmptyState message="No activities added yet." i18nKey="activities.noActivities" />
-        </div>
-      )}
     </div>
+      </>
+    )}
 
-    <!-- News List -->
+    <!-- News list: hidden while src/content/news is empty -->
+    {news.length > 0 && (
+      <>
     <h2 class="activities__heading" data-i18n-key="section.latestNews">Latest News</h2>
     <div class="news">
       {news.map(item => (
@@ -68,6 +69,12 @@ const news = (await getCollection('news')).sort((a, b) => b.data.date.valueOf() 
         </div>
       ))}
     </div>
+      </>
+    )}
+
+    {activities.length === 0 && news.length === 0 && (
+      <EmptyState message="Nothing here yet." i18nKey="activities.empty" />
+    )}
   </Container>
 </Layout>
 

@@ -1,31 +1,39 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Mail, GraduationCap, BookOpen, Code } from 'lucide-react';
+import { Mail, Phone, MapPin, GraduationCap, BookOpen, Code, Check } from 'lucide-react';
 import { SITE } from '../config';
 import Container from '../components/ui/Container.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 
+// Each role pulls its copy from the i18n dictionary (keys below); the English text is the fallback.
 const roles = [
   {
-    hue: 'blue', Icon: GraduationCap, title: 'PhD Students',
+    Icon: GraduationCap, key: 'join.phd', title: 'PhD Students',
     text: 'We are looking for PhD students with strong mathematical background and coding skills.',
     items: ['Strong math foundation', 'Proficient in Python/C++', 'Publication record is a plus'],
   },
   {
-    hue: 'green', Icon: BookOpen, title: 'Master Students',
-    text: 'Self-motivated master students who want to dive deep into research are welcome.',
+    Icon: BookOpen, key: 'join.master', title: 'Master Students',
+    text: 'Motivated master students who want to dive deep into research are welcome.',
     items: ['Passion for research', 'Good programming skills', 'Commitment to projects'],
   },
   {
-    hue: 'purple', Icon: Code, title: 'Undergraduates',
+    Icon: Code, key: 'join.undergrad', title: 'Undergraduates',
     text: 'Talented undergraduates can join us for research training and internship.',
     items: ['Curiosity driven', 'Fast learner', 'Team player'],
   },
 ];
+
+const contact = [
+  { Icon: MapPin, text: SITE.address, key: 'footer.address' },
+  ...SITE.locations.map(loc => ({ Icon: MapPin, text: loc.text, key: loc.key, sub: true })),
+  { Icon: Phone, text: SITE.phone, href: `tel:${SITE.phone}` },
+  { Icon: Mail, text: SITE.email, href: `mailto:${SITE.email}` },
+] as Array<{ Icon: any; text: string; key?: string; href?: string; sub?: boolean }>;
 ---
 
 <Layout title="Join Us">
-  <Container size="narrow" padded>
+  <Container padded>
     <PageHeader
       align="center"
       title="Join Us"
@@ -35,32 +43,45 @@ const roles = [
     />
 
     <div class="roles">
-      {roles.map(({ hue, Icon, title, text, items }) => (
-        <div class="role">
-          <div class:list={['role__icon', `role__icon--${hue}`]}>
-            <Icon size={24} />
-          </div>
-          <h3 class="role__title">{title}</h3>
-          <p class="role__text">{text}</p>
+      {roles.map(({ Icon, key, title, text, items }) => (
+        <article class="role">
+          <div class="role__icon"><Icon size={22} /></div>
+          <h3 class="role__title" data-i18n-key={key}>{title}</h3>
+          <p class="role__text" data-i18n-key={`${key}Desc`}>{text}</p>
           <ul class="role__list">
-            {items.map(item => <li>{item}</li>)}
+            {items.map((item, i) => (
+              <li>
+                <Check size={16} />
+                <span data-i18n-key={`${key}List${i + 1}`}>{item}</span>
+              </li>
+            ))}
           </ul>
-        </div>
+        </article>
       ))}
     </div>
 
-    <div class="apply">
-      <h2 class="apply__title" data-i18n-key="join.howToApply">How to Apply</h2>
-      <p class="apply__text" data-i18n-key="join.applicationText">
-        Please send your CV, transcripts, and a brief statement of research interests to our Principal Investigator.
-        Make sure to include "[Application]" in your email subject.
-      </p>
+    <section class="apply">
+      <div class="apply__main">
+        <h2 class="apply__title" data-i18n-key="join.howToApply">How to Apply</h2>
+        <p class="apply__text" data-i18n-key="join.applicationText">
+          Please send your CV, transcripts, and a brief statement of research interests to our Principal Investigator.
+          Make sure to include "[Application]" in your email subject.
+        </p>
+        <a href={`mailto:${SITE.email}`} class="apply__btn">
+          <Mail size={18} />
+          <span data-i18n-key="join.sendEmail">Send Email</span>
+        </a>
+      </div>
 
-      <a href={`mailto:${SITE.email}`} class="apply__btn">
-        <Mail size={20} />
-        <span data-i18n-key="join.sendEmail">Send Email</span>
-      </a>
-    </div>
+      <ul class="apply__contact">
+        {contact.map(({ Icon, text, key, href, sub }) => (
+          <li class:list={{ 'is-sub': sub }}>
+            <Icon size={16} />
+            {href ? <a href={href}>{text}</a> : <span data-i18n-key={key}>{text}</span>}
+          </li>
+        ))}
+      </ul>
+    </section>
   </Container>
 </Layout>
 
@@ -69,41 +90,50 @@ const roles = [
   @use 'mixins' as *;
 
   .roles {
-    display: grid; gap: 2rem; margin-bottom: 4rem;
-    @include up(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    display: grid; gap: 1.5rem; margin-bottom: 3rem;
+    @include up(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
   }
+
   .role {
     @include surface(var(--radius-2xl));
-    padding: 1.5rem; box-shadow: var(--shadow-sm);
-    transition: box-shadow 0.15s ease;
-    &:hover { box-shadow: var(--shadow-md); }
+    padding: 1.75rem; transition: box-shadow 0.15s ease, transform 0.15s ease;
+    &:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
   }
   .role__icon {
-    width: 3rem; height: 3rem; border-radius: var(--radius-xl);
-    display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;
-  }
-  @each $hue in (blue, green, purple) {
-    .role__icon--#{$hue} { background: color($hue, 50); color: color($hue, 600); }
+    width: 2.75rem; height: 2.75rem; border-radius: var(--radius-xl); margin-bottom: 1.25rem;
+    display: flex; align-items: center; justify-content: center;
+    background: color(red, 50); color: color(red, 600);
   }
   .role__title { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); margin-bottom: 0.5rem; }
-  .role__text { color: color(gray, 600); font-size: 0.875rem; line-height: 1.25rem; margin-bottom: 1rem; }
+  .role__text { color: color(gray, 600); font-size: 0.9375rem; line-height: 1.65; margin-bottom: 1.25rem; word-break: keep-all; }
   .role__list {
-    font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 600);
-    list-style: disc inside;
-    li + li { margin-top: 0.5rem; }
+    list-style: none; margin: 0; padding: 1.25rem 0 0; border-top: 1px solid color(gray, 100);
+    display: grid; gap: 0.625rem; font-size: 0.9375rem; color: color(gray, 700);
+    li { display: flex; align-items: flex-start; gap: 0.625rem; }
+    svg { flex-shrink: 0; margin-top: 0.25rem; color: color(red, 600); }
   }
 
   .apply {
-    background: color(gray, 50); border-radius: 1.5rem; padding: 2rem; text-align: center;
-    @include up(sm) { padding: 3rem; }
+    display: grid; gap: 2rem; padding: 2rem;
+    border-radius: var(--radius-2xl); background: #232323; color: color(gray, 300);
+    @include up(md) { grid-template-columns: 1.2fr 1fr; gap: 3rem; padding: 3rem; align-items: center; }
   }
-  .apply__title { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: color(gray, 900); margin-bottom: 1rem; }
-  .apply__text { color: color(gray, 600); margin-bottom: 2rem; max-width: 42rem; margin-inline: auto; }
+  .apply__title { font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: var(--c-white); margin-bottom: 0.75rem; }
+  .apply__text { line-height: 1.7; margin-bottom: 1.75rem; word-break: keep-all; }
   .apply__btn {
     display: inline-flex; align-items: center; gap: 0.5rem;
-    background: color(blue, 600); color: var(--c-white);
-    padding: 0.75rem 2rem; border-radius: var(--radius-full); font-weight: 500;
+    background: color(red, 600); color: var(--c-white);
+    padding: 0.75rem 1.75rem; border-radius: var(--radius-full); font-weight: 600;
     transition: background-color 0.15s ease;
-    &:hover { background: color(blue, 700); }
+    &:hover { background: color(red, 500); }
+    &:focus-visible { outline: 3px solid var(--c-white); outline-offset: 3px; }
+  }
+
+  .apply__contact {
+    list-style: none; margin: 0; padding: 0; display: grid; gap: 0.625rem; font-size: 0.9375rem; word-break: keep-all;
+    li { display: flex; align-items: flex-start; gap: 0.75rem; }
+    svg { flex-shrink: 0; margin-top: 0.3rem; color: color(red, 400); }
+    .is-sub { padding-left: 1.75rem; svg { display: none; } }
+    a:hover { color: var(--c-white); text-decoration: underline; }
   }
 </style>

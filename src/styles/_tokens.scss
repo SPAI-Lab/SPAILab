@@ -20,7 +20,7 @@ $palette: (
 
 // color(blue, 600) -> var(--c-blue-600)
 @function color($hue, $shade: 500) {
-  @return var(--c-#{$hue}-#{$shade});
+  @return var(--c-#{"" + $hue}-#{$shade});
 }
 
 // Breakpoints (same as the old Tailwind sm/md/lg/xl)
@@ -32,7 +32,7 @@ $container-widths: (narrow: 56rem, prose: 48rem, default: 80rem, text: 42rem);
 :root {
   @each $hue, $shades in $palette {
     @each $shade, $value in $shades {
-      --c-#{$hue}-#{$shade}: #{$value};
+      --c-#{"" + $hue}-#{$shade}: #{$value};
     }
   }
   --c-white: #fff;

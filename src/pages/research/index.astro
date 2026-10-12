@@ -45,7 +45,7 @@ const researchAreas = (await getCollection('research')).sort((a, b) => a.data.or
     </div>
 
     {researchAreas.length === 0 && (
-      <EmptyState message="No research areas defined. Add markdown files to src/content/research/" i18nKey="research.noAreas" />
+      <EmptyState message="No research areas defined." i18nKey="research.noAreas" />
     )}
   </Container>
 </Layout>

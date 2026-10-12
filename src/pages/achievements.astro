@@ -30,10 +30,10 @@ const honors = (await getCollection('honors'))
 
 const sections = [
   { id: 'papers', title: 'Published Papers', key: 'achievements.papers', icon: BookOpen, count: papers.length },
-  { id: 'books', title: 'Book Chapters', key: 'achievements.books', icon: Book, count: books.length },
-  { id: 'softwares', title: 'Software Copyrights', key: 'achievements.softwares', icon: FileCode, count: softwares.length },
-  { id: 'patents', title: 'Invention Patents', key: 'achievements.patents', icon: ScrollText, count: patents.length },
-  { id: 'honors', title: 'Group Honors', key: 'achievements.honors', icon: Award, count: honors.length },
+  { id: 'books', title: 'Book Chapters', key: 'achievements.books', icon: Book, count: books.length, hideWhenEmpty: true },
+  { id: 'softwares', title: 'Software Copyrights', key: 'achievements.softwares', icon: FileCode, count: softwares.length, hideWhenEmpty: true },
+  { id: 'patents', title: 'Invention Patents', key: 'achievements.patents', icon: ScrollText, count: patents.length, hideWhenEmpty: true },
+  { id: 'honors', title: 'Group Honors', key: 'achievements.honors', icon: Award, count: honors.length, hideWhenEmpty: true },
 ];
 ---
 
@@ -49,7 +49,7 @@ const sections = [
 
     <!-- Navigation Pills -->
     <nav class="pills">
-      {sections.map(section => (
+      {sections.filter(section => !section.hideWhenEmpty || section.count > 0).map(section => (
         <a href={`#${section.id}`} class="pill">
           <section.icon size={16} />
           <span data-i18n-key={section.key}>{section.title}</span>
@@ -68,56 +68,61 @@ const sections = [
         </div>
       </section>
 
-      <!-- Books -->
-      <section id="books">
-        <SectionHeading icon={Book} title="Book Chapters" i18nKey="achievements.books" />
-        <div class="grid grid--4">
-          {books.map(book => <BookItem entry={book} />)}
-          {books.length === 0 && <EmptyState message="No book chapters listed yet." i18nKey="achievements.noBooks" />}
-        </div>
-      </section>
+      <!-- Books: only rendered once a markdown file exists in src/content/books -->
+      {books.length > 0 && (
+        <section id="books">
+          <SectionHeading icon={Book} title="Book Chapters" i18nKey="achievements.books" />
+          <div class="grid grid--4">
+            {books.map(book => <BookItem entry={book} />)}
+          </div>
+        </section>
+      )}
 
-      <!-- Softwares -->
-      <section id="softwares">
-        <SectionHeading icon={FileCode} title="Software Copyrights" i18nKey="achievements.softwares" />
-        <div class="grid grid--3">
-          {softwares.map(software => (
-            <SoftwareCard
-              title={software.data.title}
-              developers={software.data.developers}
-              number={software.data.number}
-              date={software.data.date}
-            />
-          ))}
-          {softwares.length === 0 && <EmptyState message="No software copyrights listed yet." i18nKey="achievements.noSoftwares" />}
-        </div>
-      </section>
+      <!-- Software copyrights: hidden while src/content/softwares is empty -->
+      {softwares.length > 0 && (
+        <section id="softwares">
+          <SectionHeading icon={FileCode} title="Software Copyrights" i18nKey="achievements.softwares" />
+          <div class="grid grid--3">
+            {softwares.map(software => (
+              <SoftwareCard
+                title={software.data.title}
+                developers={software.data.developers}
+                number={software.data.number}
+                date={software.data.date}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <!-- Patents -->
-      <section id="patents">
-        <SectionHeading icon={ScrollText} title="Invention Patents" i18nKey="achievements.patents" />
-        <div class="grid">
-          {patents.map(patent => (
-            <PatentCard
-              title={patent.data.title}
-              inventors={patent.data.inventors}
-              number={patent.data.number}
-              date={patent.data.date}
-              status={patent.data.status}
-            />
-          ))}
-          {patents.length === 0 && <EmptyState message="No patents listed yet." i18nKey="achievements.noPatents" />}
-        </div>
-      </section>
+      <!-- Patents: one card per markdown file in src/content/patents -->
+      {patents.length > 0 && (
+        <section id="patents">
+          <SectionHeading icon={ScrollText} title="Invention Patents" i18nKey="achievements.patents" />
+          <div class="grid">
+            {patents.map(patent => (
+              <PatentCard
+                title={patent.data.title}
+                inventors={patent.data.inventors}
+                number={patent.data.number}
+                date={patent.data.date}
+                status={patent.data.status}
+                assignee={patent.data.assignee}
+              />
+            ))}
+          </div>
+        </section>
+      )}
 
-      <!-- Honors -->
-      <section id="honors">
-        <SectionHeading icon={Award} title="Group Honors" i18nKey="achievements.honors" />
-        <div class="grid grid--3">
-          {honors.map(honor => <HonorCard honor={honor} />)}
-          {honors.length === 0 && <EmptyState message="No group honors listed yet." i18nKey="achievements.noHonors" />}
-        </div>
-      </section>
+      <!-- Honors: hidden while src/content/honors is empty -->
+      {honors.length > 0 && (
+        <section id="honors">
+          <SectionHeading icon={Award} title="Group Honors" i18nKey="achievements.honors" />
+          <div class="grid grid--3">
+            {honors.map(honor => <HonorCard honor={honor} />)}
+          </div>
+        </section>
+      )}
     </div>
   </Container>
 </Layout>

@@ -1,0 +1,66 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { getCollection, render } from 'astro:content';
+import { Calendar, User } from 'lucide-react';
+import Container from '../../components/ui/Container.astro';
+import BackLink from '../../components/ui/BackLink.astro';
+import Prose from '../../components/ui/Prose.astro';
+import Badge from '../../components/ui/Badge.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('writing', ({ data }) => !data.draft);
+  return posts.map(post => ({
+    params: { slug: post.id.replace(/\.[^/.]+$/, '') },
+    props: { post },
+  }));
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+---
+
+<Layout title={post.data.title} description={post.data.summary}>
+  <Container size="narrow" padded>
+    <article>
+      <BackLink href="/writing">Back to Writing</BackLink>
+
+      <header class="post__header">
+        <h1 class="post__title">{post.data.title}</h1>
+        <div class="post__meta">
+          <span class="post__meta-item"><User size={16} />{post.data.author}</span>
+          <span class="post__meta-item">
+            <Calendar size={16} />
+            <time>{post.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</time>
+          </span>
+        </div>
+        {post.data.tags.length > 0 && (
+          <div class="post__tags">
+            {post.data.tags.map(tag => <Badge hue="gray">{tag}</Badge>)}
+          </div>
+        )}
+      </header>
+
+      <Prose>
+        <Content />
+      </Prose>
+    </article>
+  </Container>
+</Layout>
+
+<style lang="scss">
+  @use 'tokens' as *;
+
+  .post__header { margin-bottom: 3rem; }
+
+  .post__title {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+    font-weight: 700;
+    color: color(gray, 900);
+    margin-bottom: 1rem;
+  }
+
+  .post__meta { display: flex; flex-wrap: wrap; gap: 1.25rem; color: color(gray, 500); margin-bottom: 1rem; }
+  .post__meta-item { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .post__tags { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+</style>
