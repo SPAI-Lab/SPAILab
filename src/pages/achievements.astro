@@ -11,11 +11,17 @@ import SectionHeading from '../components/ui/SectionHeading.astro';
 import SoftwareCard from '../components/ui/SoftwareCard.astro';
 import PatentCard from '../components/ui/PatentCard.astro';
 import { Book, FileCode, ScrollText, Award, BookOpen } from 'lucide-react';
+import { publicationCategory, PUB_CATEGORIES } from '../lib/publication';
 
 // Fetch Collections
 const papers = (await getCollection('publications'))
   .filter(p => p.data.type === 'paper')
   .sort((a, b) => b.data.year - a.data.year);
+// Category chips (international / domestic / conference) are derived from each paper's venue.
+const paperCategories = PUB_CATEGORIES
+  .map(c => ({ ...c, count: papers.filter(p => publicationCategory(p.data.venue) === c.id).length }))
+  .filter(c => c.count > 0);
+
 const books = (await getCollection('books'))
   .sort((a, b) => b.data.year - a.data.year);
 
@@ -62,8 +68,22 @@ const sections = [
       <!-- Papers -->
       <section id="papers">
         <SectionHeading icon={BookOpen} title="Published Papers" i18nKey="achievements.papers" />
-        <div class="grid">
-          {papers.map(paper => <PublicationItem entry={paper} />)}
+        {paperCategories.length > 1 && (
+          <div class="chips" role="group" aria-label="Filter papers" data-chips>
+            <button type="button" class="chip is-active" data-cat="">
+              <span data-i18n-key="pub.all">All</span> <small>{papers.length}</small>
+            </button>
+            {paperCategories.map(c => (
+              <button type="button" class="chip" data-cat={c.id}>
+                <span data-i18n-key={c.key}>{c.label}</span> <small>{c.count}</small>
+              </button>
+            ))}
+          </div>
+        )}
+        <div class="grid" data-papers>
+          {papers.map(paper => (
+            <div data-category={publicationCategory(paper.data.venue)}><PublicationItem entry={paper} /></div>
+          ))}
           {papers.length === 0 && <EmptyState message="No papers listed yet." i18nKey="achievements.noPapers" />}
         </div>
       </section>
@@ -103,6 +123,7 @@ const sections = [
             {patents.map(patent => (
               <PatentCard
                 title={patent.data.title}
+                titleEn={patent.data.titleEn}
                 inventors={patent.data.inventors}
                 number={patent.data.number}
                 date={patent.data.date}
@@ -127,9 +148,35 @@ const sections = [
   </Container>
 </Layout>
 
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-chips]');
+  const items = document.querySelectorAll<HTMLElement>('[data-papers] [data-category]');
+  bar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
+    if (!btn) return;
+    const cat = btn.dataset.cat ?? '';
+    bar.querySelectorAll('.chip').forEach(c => c.classList.toggle('is-active', c === btn));
+    items.forEach(item => { item.hidden = !!cat && item.dataset.category !== cat; });
+  });
+</script>
+
 <style lang="scss">
   @use 'tokens' as *;
   @use 'mixins' as *;
+
+  .chips { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 0.375rem;
+    padding: 0.375rem 0.875rem; border: 1px solid color(gray, 200); border-radius: var(--radius-full);
+    background: var(--c-white); color: color(gray, 600); font-size: 0.875rem; cursor: pointer; transition: all 0.15s ease;
+    small { font-size: 0.75rem; color: color(gray, 400); }
+    &:hover { border-color: color(gray, 400); color: color(gray, 900); }
+    &.is-active { background: color(gray, 900); border-color: color(gray, 900); color: var(--c-white); small { color: color(gray, 300); } }
+    &:focus-visible { outline: 2px solid color(red, 500); outline-offset: 2px; }
+  }
+  [data-category][hidden] { display: none; }
+  [data-papers] { gap: 0; border-top: 1px solid color(gray, 200); }
+  [data-papers] > [data-category] { border-bottom: 1px solid color(gray, 200); }
 
   .pills {
     display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem;
@@ -144,7 +191,7 @@ const sections = [
     background: color(gray, 50); color: color(gray, 600);
     font-size: 0.875rem; line-height: 1.25rem; font-weight: 500;
     transition: background-color 0.15s, color 0.15s;
-    &:hover { background: color(blue, 50); color: color(blue, 600); }
+    &:hover { background: color(accent, 50); color: color(accent, 600); }
     :global(svg) { @include icon(1rem); }
   }
   .pill__count {

@@ -4,7 +4,6 @@ authors: ["Jongwon Seok", "Keunsung Bae"]
 year: 2014
 venue: "IEICE Transactions on Information and Systems"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.1587/transinf.2014edl8003"
   code: ""

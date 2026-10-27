@@ -4,7 +4,6 @@ authors: ["Jongwon Seok", "Taehwan Kim", "Keunsung Bae"]
 year: 2013
 venue: "The Journal of the Korean Institute of Information and Communication Engineering"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.6109/jkiice.2013.17.3.540"
   code: ""

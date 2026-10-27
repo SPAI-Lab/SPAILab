@@ -2,47 +2,30 @@
 // Wide profile card for faculty / PI. Students use the compact TeamCard.
 import { url } from '../lib/url';
 import type { CollectionEntry } from 'astro:content';
-import { Mail, Phone, MapPin, FlaskConical, ArrowRight } from 'lucide-react';
-import Badge from './ui/Badge.astro';
-import placeholder from '../assets/avatar-placeholder.svg';
+import { Mail, ArrowRight } from 'lucide-react';
+import { memberPhotoSrc } from '../lib/avatar';
 
 interface Props { member: CollectionEntry<'team'>; }
 
 const { member } = Astro.props;
-const { name, avatar, avatarUrl, bio, email, phone, office, lab, title } = member.data;
+const { name, nameEn, email } = member.data;
+const photo = memberPhotoSrc(member);
 const profileUrl = url(`/team/${member.id.replace(/\.[^/.]+$/, '')}`);
 
-const rows = [
-  office && { Icon: MapPin, text: office },
-  lab && { Icon: FlaskConical, text: lab },
-  phone && { Icon: Phone, text: phone, href: `tel:${phone}` },
-  email && { Icon: Mail, text: email, href: `mailto:${email}` },
-].filter(Boolean) as Array<{ Icon: any; text: string; href?: string }>;
 ---
 <article class="feature">
   <a href={profileUrl} class="feature__photo" tabindex="-1" aria-hidden="true">
-    <img src={avatarUrl ?? (avatar ?? placeholder).src} alt="" loading="lazy" />
+    <img src={photo} alt="" loading="lazy" />
   </a>
 
   <div class="feature__body">
     <h3 class="feature__name"><a href={profileUrl}>{name}</a></h3>
 
-    {title && title.length > 0 && (
-      <div class="feature__badges">
-        {title.map((t, i) => <Badge hue={i === 0 ? 'red' : 'gray'}>{t}</Badge>)}
-      </div>
-    )}
+    {nameEn && <p class="feature__name-en">{nameEn}</p>}
 
-    {bio && <p class="feature__bio">{bio}</p>}
-
-    {rows.length > 0 && (
+    {email && (
       <ul class="feature__contact">
-        {rows.map(({ Icon, text, href }) => (
-          <li>
-            <Icon size={16} />
-            {href ? <a href={href}>{text}</a> : <span>{text}</span>}
-          </li>
-        ))}
+        <li><Mail size={16} /><a href={`mailto:${email}`}>{email}</a></li>
       </ul>
     )}
 
@@ -63,21 +46,20 @@ const rows = [
     transition: box-shadow 0.15s ease;
     &:hover { box-shadow: var(--shadow-md); }
 
-    @include up(sm) { grid-template-columns: 11rem 1fr; gap: 2rem; padding: 2rem; }
+    @include up(sm) { grid-template-columns: 14rem 1fr; gap: 2rem; padding: 2rem; }
   }
 
   .feature__photo {
-    display: block; width: 9rem; aspect-ratio: 1; overflow: hidden; border-radius: var(--radius-xl); background: color(gray, 100);
+    display: block; width: 12rem; aspect-ratio: 5 / 6; overflow: hidden; border-radius: var(--radius-xl); background: color(gray, 100);
     @include up(sm) { width: 100%; }
-    img { width: 100%; height: 100%; object-fit: cover; }
+    img { width: 100%; height: 100%; object-fit: contain; }
   }
 
   .feature__name {
     font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: color(gray, 900);
     a:hover { color: color(red, 600); }
   }
-  .feature__badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
-  .feature__bio { margin-top: 1rem; color: color(gray, 600); line-height: 1.75; word-break: keep-all; }
+  .feature__name-en { margin-top: 0.25rem; color: color(gray, 500); }
 
   .feature__contact {
     list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.375rem;

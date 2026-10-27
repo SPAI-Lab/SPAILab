@@ -40,8 +40,8 @@ const allNews = (await getCollection('news')).sort((a, b) => b.data.date.valueOf
   .timeline__dot {
     position: absolute; left: -37px; top: 0.375rem;
     width: 1rem; height: 1rem; border-radius: var(--radius-full);
-    background: color(blue, 100); border: 2px solid var(--c-white);
-    box-shadow: 0 0 0 1px color(blue, 600);
+    background: color(accent, 100); border: 2px solid var(--c-white);
+    box-shadow: 0 0 0 1px color(accent, 600);
   }
   .timeline__date { display: block; font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 500); margin-bottom: 0.5rem; }
   .timeline__title { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); margin-bottom: 0.5rem; }

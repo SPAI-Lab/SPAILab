@@ -4,7 +4,6 @@ authors: ["Chanjin Kwon", "Hye Bin Gwag", "Jongwon Seok"]
 year: 2025
 venue: "Applied Sciences"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.3390/app15158384"
   code: ""

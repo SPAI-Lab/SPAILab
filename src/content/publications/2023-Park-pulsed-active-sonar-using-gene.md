@@ -4,7 +4,6 @@ authors: ["Jinuk Park", "Geunhwan Kim", "Jongwon Seok", "Jungpyo Hong"]
 year: 2023
 venue: "IEEE Access"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.1109/access.2023.3344290"
   code: ""

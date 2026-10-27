@@ -4,7 +4,6 @@ authors: ["Jongwon Seok", "Keunsung Bae"]
 year: 1998
 venue: "The Journal of the Acoustical Society of America"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.1121/1.421594"
   code: ""
