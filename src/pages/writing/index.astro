@@ -27,36 +27,40 @@ const fmt = (d: Date) => d.toISOString().split('T')[0];
       subtitleKey="writing.subtitle"
     />
 
-    {tags.length > 0 && (
-      <div class="filters" role="group" aria-label="Filter by tag" data-filters>
-        <button type="button" class="chip is-active" data-tag="" data-i18n-key="writing.all">All</button>
-        {tags.map(tag => <button type="button" class="chip" data-tag={tag}>{tag}</button>)}
-      </div>
-    )}
+    {posts.length > 0 && (
+      <>
+        {tags.length > 0 && (
+          <div class="filters" role="group" aria-label="Filter by tag" data-filters>
+            <button type="button" class="chip is-active" data-tag="" data-i18n-key="writing.all">All</button>
+            {tags.map(tag => <button type="button" class="chip" data-tag={tag}>{tag}</button>)}
+          </div>
+        )}
 
-    <ul class="posts" data-posts>
-      {posts.map(post => (
-        <li class="post" data-tags={post.data.tags.join('|')}>
-          <a href={url(`/writing/${postSlug(post.id)}`)} class="post__link">
-            <div class="post__meta">
-              <time>{fmt(post.data.date)}</time>
-              <span class="post__dot" aria-hidden="true"></span>
-              <span>{post.data.author}</span>
-            </div>
-            <h2 class="post__title">
-              {post.data.title}
-              <ArrowUpRight size={18} />
-            </h2>
-            {post.data.summary && <p class="post__summary">{post.data.summary}</p>}
-            {post.data.tags.length > 0 && (
-              <div class="post__tags">
-                {post.data.tags.map(tag => <span class="tag">#{tag}</span>)}
-              </div>
-            )}
-          </a>
-        </li>
-      ))}
-    </ul>
+        <ul class="posts" data-posts>
+          {posts.map(post => (
+            <li class="post" data-tags={post.data.tags.join('|')}>
+              <a href={url(`/writing/${postSlug(post.id)}`)} class="post__link">
+                <div class="post__meta">
+                  <time>{fmt(post.data.date)}</time>
+                  <span class="post__dot" aria-hidden="true"></span>
+                  <span>{post.data.author}</span>
+                </div>
+                <h2 class="post__title">
+                  {post.data.title}
+                  <ArrowUpRight size={18} />
+                </h2>
+                {post.data.summary && <p class="post__summary">{post.data.summary}</p>}
+                {post.data.tags.length > 0 && (
+                  <div class="post__tags">
+                    {post.data.tags.map(tag => <span class="tag">#{tag}</span>)}
+                  </div>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
 
     {posts.length === 0 && <EmptyState message="No posts yet." i18nKey="writing.empty" />}
   </Container>

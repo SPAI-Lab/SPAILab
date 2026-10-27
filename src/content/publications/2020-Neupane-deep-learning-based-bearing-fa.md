@@ -4,7 +4,6 @@ authors: ["Dhiraj Neupane", "Jongwon Seok"]
 year: 2020
 venue: "International Conference on Information and Communication Technology Convergence (ICTC)"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.1109/ictc49870.2020.9289232"
   code: ""

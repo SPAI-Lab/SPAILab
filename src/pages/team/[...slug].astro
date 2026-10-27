@@ -1,11 +1,13 @@
 ---
-import placeholder from '../../assets/avatar-placeholder.svg';
+import { memberPhotoSrc } from '../../lib/avatar';
 import Layout from '../../layouts/Layout.astro';
-import { getCollection, render } from 'astro:content';
+import { getCollection } from 'astro:content';
 import Container from '../../components/ui/Container.astro';
 import BackLink from '../../components/ui/BackLink.astro';
-import SocialLinks from '../../components/ui/SocialLinks.astro';
-import Prose from '../../components/ui/Prose.astro';
+import PublicationItem from '../../components/PublicationItem.astro';
+import PatentCard from '../../components/ui/PatentCard.astro';
+import SectionHeading from '../../components/ui/SectionHeading.astro';
+import { BookOpen, GraduationCap, Mail, ScrollText } from 'lucide-react';
 
 export async function getStaticPaths() {
   const teamMembers = await getCollection('team');
@@ -16,53 +18,73 @@ export async function getStaticPaths() {
 }
 
 const { member } = Astro.props;
-const { Content } = await render(member);
-const { name, role, title, avatar, avatarUrl, email, website, linkedin, github, twitter, googleScholar } = member.data;
-
-const roleToKey = {
-  'Principal Investigator': 'team.pi',
-  'Professor': 'team.professor',
-  'Teacher': 'team.teacher',
-  'Postdoctoral Researcher': 'team.postdoc_researcher',
-  'Postdoc': 'team.postdoc',
-  'PhD Student': 'team.phd',
-  'Master Student': 'team.master',
-  'Graduate Student': 'team.graduate',
-  'Undergraduate': 'team.undergrad',
-  'Former Member': 'team.former'
-};
+const photo = memberPhotoSrc(member);
+const { name, nameEn, email, googleScholar } = member.data;
+const isProfessor = member.id.replace(/\.[^/.]+$/, '') === 'prof-seok-jongwon';
+const publications = (await getCollection('publications'))
+  .filter((entry) => isProfessor || (nameEn && entry.data.authors.includes(nameEn)))
+  .sort((a, b) => b.data.year - a.data.year);
+const patents = isProfessor
+  ? (await getCollection('patents')).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  : [];
 ---
 
 <Layout title={name}>
   <Container size="narrow" padded>
-    <BackLink href="/team">Back to Team</BackLink>
+    <BackLink href="/team"><span data-i18n-key="team.back">Back to Team</span></BackLink>
 
     <div class="member">
       <div class="member__inner">
         <div class="member__avatar">
-          <img src={avatarUrl ?? (avatar ?? placeholder).src} alt={name} />
+          <img src={photo} alt={name} />
         </div>
 
         <div class="member__info">
           <h1 class="member__name">{name}</h1>
-          <p class="member__role">{role}</p>
-
-          <SocialLinks variant="pill" {email} {website} {linkedin} {github} {twitter} {googleScholar} />
-
-          {title && title.length > 0 && (
-            <div class="member__tags">
-              {title.map((t) => (
-                <span class="member__tag">{t}</span>
-              ))}
-            </div>
+          {nameEn && <p class="member__name-en">{nameEn}</p>}
+          {email && (
+            <ul class="member__contact">
+              <li><Mail size={16} /><a href={`mailto:${email}`}>{email}</a></li>
+              {googleScholar && (
+                <li>
+                  <GraduationCap size={16} />
+                  <a href={googleScholar} target="_blank" rel="noopener noreferrer">Google Scholar</a>
+                </li>
+              )}
+            </ul>
           )}
         </div>
       </div>
     </div>
 
-    <Prose>
-      <Content />
-    </Prose>
+    {publications.length > 0 && (
+      <section class="member__achievements">
+        <SectionHeading icon={BookOpen} title={`Publications (${publications.length})`} />
+        <div class="member__publication-list">
+          {publications.map((publication) => <PublicationItem entry={publication} />)}
+        </div>
+      </section>
+    )}
+
+    {patents.length > 0 && (
+      <section class="member__achievements">
+        <SectionHeading icon={ScrollText} title={`Patents (${patents.length})`} />
+        <div class="member__patent-list">
+          {patents.map((patent) => (
+            <PatentCard
+              title={patent.data.title}
+              titleEn={patent.data.titleEn}
+              inventors={patent.data.inventors}
+              number={patent.data.number}
+              date={patent.data.date}
+              status={patent.data.status}
+              assignee={patent.data.assignee}
+            />
+          ))}
+        </div>
+      </section>
+    )}
+
   </Container>
 </Layout>
 
@@ -88,7 +110,7 @@ const roleToKey = {
 
   .member__avatar {
     width: 8rem;
-    height: 8rem;
+    aspect-ratio: 3 / 4;
     border-radius: var(--radius-2xl);
     overflow: hidden;
     background: color(gray, 100);
@@ -96,12 +118,11 @@ const roleToKey = {
     margin-inline: auto;
 
     @include up(md) {
-      width: 12rem;
-      height: 12rem;
+      width: 10rem;
       margin-inline: 0;
     }
 
-    img { width: 100%; height: 100%; object-fit: cover; }
+    img { width: 100%; height: 100%; object-fit: contain; }
   }
 
   .member__info {
@@ -118,30 +139,25 @@ const roleToKey = {
     margin-bottom: 0.5rem;
   }
 
-  .member__role {
+  .member__name-en {
     font-size: 1.25rem;
     line-height: 1.75rem;
     font-weight: 500;
-    color: color(blue, 600);
+    color: color(accent, 600);
     margin-bottom: 1.5rem;
   }
 
-  .member__tags {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    @include up(md) { justify-content: flex-start; }
+.member__contact {
+    list-style: none; margin: 0 0 1rem; padding: 0; display: grid; gap: 0.25rem; font-size: 0.9375rem; color: color(gray, 700);
+    li { display: flex; align-items: center; gap: 0.5rem; }
+    svg { color: color(accent, 600); }
+    a:hover { color: color(accent, 600); text-decoration: underline; }
   }
 
-  .member__tag {
-    background: color(blue, 100);
-    color: color(blue, 800);
-    font-size: 0.75rem;
-    line-height: 1rem;
-    padding: 0.125rem 0.625rem;
-    border-radius: var(--radius-sm);
-    border: 1px solid color(blue, 200);
+  .member__achievements { margin-top: 3.5rem; }
+  .member__publication-list {
+    border-top: 1px solid color(gray, 200);
+    > :global(*) { border-bottom: 1px solid color(gray, 200); }
   }
+  .member__patent-list { display: grid; gap: 1rem; }
 </style>

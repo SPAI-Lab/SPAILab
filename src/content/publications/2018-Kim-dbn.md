@@ -1,10 +1,9 @@
 ---
-title: "일반화된 판별분석 기법을 이용한 능동소나 표적 식별"
-authors: ["김동욱", "김태환", "Jongwon Seok", "Keunsung Bae"]
+title: "DBN을 이용한 다중 방위 데이터 기반 능동소나 표적 식별"
+authors: ["Dongwook Kim", "Keunsung Bae", "Jongwon Seok"]
 year: 2018
 venue: "Venue unavailable"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: ""
   code: ""

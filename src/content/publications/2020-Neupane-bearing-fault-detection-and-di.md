@@ -4,7 +4,6 @@ authors: ["Dhiraj Neupane", "Jongwon Seok"]
 year: 2020
 venue: "IEEE Access"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.1109/access.2020.2990528"
   code: ""

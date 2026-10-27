@@ -31,12 +31,15 @@ const patents = (await getCollection('patents')).sort((a, b) => b.data.date.valu
               <StatusBadge status={patent.data.status} />
             </div>
 
-            <div class="patent__inventors">
-              <span class="patent__label">Inventors:</span> {patent.data.inventors.join(', ')}
-            </div>
+            {patent.data.titleEn && <p class="patent__title-en">{patent.data.titleEn}</p>}
+            {patent.data.inventors && patent.data.inventors.length > 0 && (
+              <div class="patent__inventors">
+                <span class="patent__label">Inventors:</span> {patent.data.inventors.join(', ')}
+              </div>
+            )}
 
             <div class="patent__meta">
-              <span class="patent__number">{patent.data.number}</span>
+              {patent.data.number && <span class="patent__number">{patent.data.number}</span>}
               <time>{patent.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</time>
             </div>
           </div>
@@ -61,7 +64,7 @@ const patents = (await getCollection('patents')).sort((a, b) => b.data.date.valu
   }
   .patent__icon {
     display: flex; flex-shrink: 0; padding: 0.75rem;
-    background: color(blue, 50); color: color(blue, 600); border-radius: var(--radius-lg);
+    background: color(accent, 50); color: color(accent, 600); border-radius: var(--radius-lg);
   }
   .patent__main { flex-grow: 1; }
   .patent__head {
@@ -69,6 +72,7 @@ const patents = (await getCollection('patents')).sort((a, b) => b.data.date.valu
     gap: 0.5rem; margin-bottom: 0.5rem;
   }
   .patent__title { font-size: 1.125rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); }
+  .patent__title-en { margin: 0.25rem 0 0.75rem; font-size: 0.8125rem; color: color(gray, 500); }
   .patent__inventors { font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 600); margin-bottom: 0.75rem; }
   .patent__label { font-weight: 500; color: color(gray, 900); }
   .patent__meta { display: flex; align-items: center; gap: 1rem; font-size: 0.875rem; line-height: 1.25rem; color: color(gray, 500); }

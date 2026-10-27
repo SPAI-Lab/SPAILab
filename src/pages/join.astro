@@ -1,28 +1,9 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import { Mail, Phone, MapPin, GraduationCap, BookOpen, Code, Check } from 'lucide-react';
+import { Mail, Phone, MapPin } from 'lucide-react';
 import { SITE } from '../config';
 import Container from '../components/ui/Container.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
-
-// Each role pulls its copy from the i18n dictionary (keys below); the English text is the fallback.
-const roles = [
-  {
-    Icon: GraduationCap, key: 'join.phd', title: 'PhD Students',
-    text: 'We are looking for PhD students with strong mathematical background and coding skills.',
-    items: ['Strong math foundation', 'Proficient in Python/C++', 'Publication record is a plus'],
-  },
-  {
-    Icon: BookOpen, key: 'join.master', title: 'Master Students',
-    text: 'Motivated master students who want to dive deep into research are welcome.',
-    items: ['Passion for research', 'Good programming skills', 'Commitment to projects'],
-  },
-  {
-    Icon: Code, key: 'join.undergrad', title: 'Undergraduates',
-    text: 'Talented undergraduates can join us for research training and internship.',
-    items: ['Curiosity driven', 'Fast learner', 'Team player'],
-  },
-];
 
 const contact = [
   { Icon: MapPin, text: SITE.address, key: 'footer.address' },
@@ -38,27 +19,9 @@ const contact = [
       align="center"
       title="Join Us"
       titleKey="join.title"
-      subtitle="We are always looking for motivated students to join our team. If you are interested in our research areas, please contact us!"
+      subtitle="We are looking for students to join our lab. If you are interested in our research areas, please contact us."
       subtitleKey="join.subtitle"
     />
-
-    <div class="roles">
-      {roles.map(({ Icon, key, title, text, items }) => (
-        <article class="role">
-          <div class="role__icon"><Icon size={22} /></div>
-          <h3 class="role__title" data-i18n-key={key}>{title}</h3>
-          <p class="role__text" data-i18n-key={`${key}Desc`}>{text}</p>
-          <ul class="role__list">
-            {items.map((item, i) => (
-              <li>
-                <Check size={16} />
-                <span data-i18n-key={`${key}List${i + 1}`}>{item}</span>
-              </li>
-            ))}
-          </ul>
-        </article>
-      ))}
-    </div>
 
     <section class="apply">
       <div class="apply__main">
@@ -88,30 +51,6 @@ const contact = [
 <style lang="scss">
   @use 'tokens' as *;
   @use 'mixins' as *;
-
-  .roles {
-    display: grid; gap: 1.5rem; margin-bottom: 3rem;
-    @include up(md) { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
-  }
-
-  .role {
-    @include surface(var(--radius-2xl));
-    padding: 1.75rem; transition: box-shadow 0.15s ease, transform 0.15s ease;
-    &:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
-  }
-  .role__icon {
-    width: 2.75rem; height: 2.75rem; border-radius: var(--radius-xl); margin-bottom: 1.25rem;
-    display: flex; align-items: center; justify-content: center;
-    background: color(red, 50); color: color(red, 600);
-  }
-  .role__title { font-size: 1.25rem; line-height: 1.75rem; font-weight: 700; color: color(gray, 900); margin-bottom: 0.5rem; }
-  .role__text { color: color(gray, 600); font-size: 0.9375rem; line-height: 1.65; margin-bottom: 1.25rem; word-break: keep-all; }
-  .role__list {
-    list-style: none; margin: 0; padding: 1.25rem 0 0; border-top: 1px solid color(gray, 100);
-    display: grid; gap: 0.625rem; font-size: 0.9375rem; color: color(gray, 700);
-    li { display: flex; align-items: flex-start; gap: 0.625rem; }
-    svg { flex-shrink: 0; margin-top: 0.25rem; color: color(red, 600); }
-  }
 
   .apply {
     display: grid; gap: 2rem; padding: 2rem;

@@ -3,7 +3,7 @@ import { url } from '../lib/url';
 import Layout from '../layouts/Layout.astro';
 import { getCollection } from 'astro:content';
 import { Image } from 'astro:assets';
-import { Calendar } from 'lucide-react';
+import { Calendar, FlaskConical, BookOpen, Users, UserPlus, ArrowUpRight } from 'lucide-react';
 import { SITE } from '../config';
 import Container from '../components/ui/Container.astro';
 import SectionHeaderLink from '../components/ui/SectionHeaderLink.astro';
@@ -15,15 +15,19 @@ const allPapers = allPubs
   .sort((a, b) => b.data.year - a.data.year);
 // Featured papers first; if none are flagged, fall back to the latest ones.
 const featured = allPapers.filter(p => p.data.featured);
-const papers = (featured.length > 0 ? featured : allPapers).slice(0, 3);
+const papers = (featured.length > 0 ? featured : allPapers).slice(0, 5);
+const pubsTitle = featured.length > 0 ? { text: 'Selected Publications', key: 'section.selectedPubs' } : { text: 'Recent Publications', key: 'section.recentPubs' };
+const teamCount = (await getCollection('team')).length;
 
 const researchCount = (await getCollection('research')).length;
-// Numbers with no data behind them are dropped instead of showing 0 / Infinity.
-const stats = [
-  { value: allPapers.length, key: 'hero.stat.papers', label: 'Publications' },
-  { value: researchCount, key: 'hero.stat.areas', label: 'Research areas' },
-  { value: allPubs.length > 0 ? Math.min(...allPubs.map(p => p.data.year)) : 0, key: 'hero.stat.since', label: 'Publishing since' },
-].filter(stat => stat.value > 0);
+
+// Shortcut tiles under the hero (same idea as other CWNU lab sites); a tile with nothing behind it is dropped.
+const tiles = [
+  { href: '/research', Icon: FlaskConical, key: 'tile.research', title: 'Research', descKey: 'tile.researchDesc', desc: 'Research areas and topics', count: researchCount },
+  { href: '/achievements', Icon: BookOpen, key: 'tile.papers', title: 'Publications', descKey: 'tile.papersDesc', desc: 'Journals and conference papers', count: allPapers.length },
+  { href: '/team', Icon: Users, key: 'tile.team', title: 'Team', descKey: 'tile.teamDesc', desc: 'Professor and members', count: teamCount },
+  { href: '/join', Icon: UserPlus, key: 'tile.join', title: 'Join Us', descKey: 'tile.joinDesc', desc: 'How to apply', count: 1 },
+].filter(tile => tile.count > 0);
 
 const activities = (await getCollection('activities'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
@@ -57,74 +61,65 @@ const activities = (await getCollection('activities'))
               Meet the Team
             </a>
           </div>
-          {stats.length > 0 && (
-          <dl class="hero__stats">
-            {stats.map(stat => (
-              <div class="hero__stat">
-                <dt data-i18n-key={stat.key}>{stat.label}</dt>
-                <dd data-count={stat.value} data-nogroup={stat.key === 'hero.stat.since' ? '' : undefined}>{stat.value}</dd>
-              </div>
-            ))}
-          </dl>
-          )}
         </div>
       </Container>
     </div>
-
-    <!-- Scroll Indicator -->
-    <div class="hero__scroll">
-      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
-      </svg>
-    </div>
   </section>
 
-  <!-- Selected Publications -->
+  <!-- Shortcut tiles -->
+  {tiles.length > 0 && (
+  <section class="tiles">
+    <Container>
+      <ul class="tiles__grid">
+        {tiles.map(({ href, Icon, key, title, descKey, desc }) => (
+          <li>
+            <a href={url(href)} class="tile">
+              <span class="tile__icon"><Icon size={22} /></span>
+              <span class="tile__text">
+                <strong data-i18n-key={key}>{title}</strong>
+                <small data-i18n-key={descKey}>{desc}</small>
+              </span>
+              <ArrowUpRight size={18} class="tile__arrow" />
+            </a>
+          </li>
+        ))}
+      </ul>
+    </Container>
+  </section>
+  )}
+
+  <!-- Publications -->
   {papers.length > 0 && (
   <section class="section section--gray">
     <Container>
-      <SectionHeaderLink title="Selected Publications" titleKey="section.selectedPubs" href="/achievements" />
+      <SectionHeaderLink title={pubsTitle.text} titleKey={pubsTitle.key} href="/achievements" />
 
-      <div class="grid grid--pubs">
+      <ul class="pubrows">
         {papers.map(paper => {
           const link = paper.data.links?.website || paper.data.links?.pdf || url('/achievements');
           const isExternal = link.startsWith('http');
           return (
-          <a
-            href={link}
-            target={isExternal ? "_blank" : undefined}
-            rel={isExternal ? "noopener noreferrer" : undefined}
-            class="pub"
-          >
-             {paper.data.cover && (
-               <div class="pub__cover">
-                 <Image
-                   src={paper.data.cover}
-                   alt={paper.data.title}
-                   quality={60}
-                   format="webp"
-                   widths={[320, 480]}
-                   sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                 />
-               </div>
-             )}
-             <div class="pub__body">
-               <h3 class="pub__title">
-                 {paper.data.title}
-               </h3>
-               <p class="pub__authors" title={paper.data.authors.join(', ')}>
-                 {paper.data.authors.length > 3
-                   ? `${paper.data.authors.slice(0, 3).join(', ')}, et al.`
-                   : paper.data.authors.join(', ')}
-               </p>
-               <div class="pub__meta">
-                  <span class="pub__venue" title={paper.data.venue}>{paper.data.venue}</span>
-                  <span class="pub__year">{paper.data.year}</span>
-               </div>
-             </div>
-          </a>
-        )})}
-      </div>
+            <li>
+              <a
+                href={link}
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noopener noreferrer" : undefined}
+                class="pubrow"
+              >
+                <span class="pubrow__year">{paper.data.year}</span>
+                <span class="pubrow__main">
+                  <span class="pubrow__title">{paper.data.title}</span>
+                  <span class="pubrow__meta" title={paper.data.authors.join(', ')}>
+                    {paper.data.authors.length > 3
+                      ? `${paper.data.authors.slice(0, 3).join(', ')}, et al.`
+                      : paper.data.authors.join(', ')} · {paper.data.venue}
+                  </span>
+                </span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
     </Container>
   </section>
   )}
@@ -169,29 +164,6 @@ const activities = (await getCollection('activities'))
   </section>
   )}
 </Layout>
-
-<script>
-  // Count-up for the hero numbers; skipped for reduced-motion.
-  const els = document.querySelectorAll<HTMLElement>('.hero__stat dd[data-count]');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if (!reduce) {
-    els.forEach(el => {
-      const end = Number(el.dataset.count);
-      const noGroup = 'nogroup' in el.dataset;
-      // Years count up from a nearby value instead of 0 so it doesn't flash "0".
-      const start = noGroup ? end - 40 : 0;
-      const t0 = performance.now();
-      const dur = 1200;
-      const tick = (now: number) => {
-        const p = Math.min(1, (now - t0) / dur);
-        const eased = 1 - (1 - p) ** 3;
-        el.textContent = String(Math.round(start + (end - start) * eased));
-        if (p < 1) requestAnimationFrame(tick);
-      };
-      requestAnimationFrame(tick);
-    });
-  }
-</script>
 
 <style lang="scss">
   @use 'tokens' as *;
@@ -251,25 +223,46 @@ const activities = (await getCollection('activities'))
     border: 2px solid rgb(255 255 255 / 0.3); color: var(--c-white); backdrop-filter: blur(4px);
     &:hover { background: rgb(255 255 255 / 0.1); }
   }
-  .hero__stats {
-    margin-top: 3rem; display: flex; flex-wrap: wrap; gap: 1.5rem 3rem;
-    padding-top: 1.5rem; border-top: 1px solid rgb(255 255 255 / 0.14); max-width: 34rem;
+
+  // ---- Shortcut tiles ----
+  .tiles { background: var(--c-white); border-bottom: 1px solid color(gray, 200); }
+  .tiles__grid {
+    list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr; margin-top: -2.5rem; position: relative; z-index: 20;
+    background: var(--c-white); border: 1px solid color(gray, 200); box-shadow: var(--shadow-md); border-radius: var(--radius-xl); overflow: hidden;
+    @include up(sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    @include up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    li { border-top: 1px solid color(gray, 100); &:first-child { border-top: 0; } }
+    @include up(sm) { li:nth-child(-n+2) { border-top: 0; } }
+    @include up(lg) { li { border-top: 0; border-left: 1px solid color(gray, 100); &:first-child { border-left: 0; } } }
+    margin-bottom: 0;
   }
-  .hero__stat {
-    dt { font-size: 0.8125rem; letter-spacing: 0.04em; text-transform: uppercase; color: color(gray, 400); }
-    dd {
-      margin-top: 0.25rem; font-family: var(--font-mono); font-size: 2rem; line-height: 2.25rem;
-      font-weight: 700; color: var(--c-white); font-variant-numeric: tabular-nums;
-    }
+  .tile {
+    display: flex; align-items: center; gap: 1rem; padding: 1.5rem; transition: background-color 0.15s ease;
+    &:hover { background: color(gray, 50); }
+    &:hover .tile__arrow { color: color(accent, 600); transform: translate(2px, -2px); }
+    &:hover .tile__icon { background: color(accent, 600); color: var(--c-white); }
+    &:focus-visible { outline: 2px solid color(accent, 600); outline-offset: -2px; }
   }
-  .hero__scroll {
-    position: absolute; bottom: 2rem; left: 50%;
-    color: rgb(255 255 255 / 0.5); animation: hero-bounce 1s infinite;
+  .tile__icon {
+    flex-shrink: 0; width: 2.75rem; height: 2.75rem; border-radius: var(--radius-lg);
+    display: flex; align-items: center; justify-content: center;
+    background: color(accent, 50); color: color(accent, 600); transition: all 0.15s ease;
   }
-  @keyframes hero-bounce {
-    0%, 100% { transform: translate(-50%, -25%); animation-timing-function: cubic-bezier(0.8, 0, 1, 1); }
-    50% { transform: translate(-50%, 0); animation-timing-function: cubic-bezier(0, 0, 0.2, 1); }
+  .tile__text { flex: 1; min-width: 0; display: grid; strong { font-size: 1rem; color: color(gray, 900); } small { font-size: 0.8125rem; color: color(gray, 500); } }
+  .tile__arrow { flex-shrink: 0; color: color(gray, 400); transition: all 0.15s ease; }
+
+  // ---- Publication rows ----
+  .pubrows { list-style: none; margin: 0; padding: 0; border-top: 1px solid color(gray, 200); }
+  .pubrows li { border-bottom: 1px solid color(gray, 200); }
+  .pubrow {
+    display: grid; grid-template-columns: 3.5rem 1fr; gap: 1rem; padding: 1.125rem 0.25rem; transition: background-color 0.15s ease;
+    &:hover .pubrow__title { color: color(accent, 600); }
+    &:focus-visible { outline: 2px solid color(accent, 600); outline-offset: -2px; }
   }
+  .pubrow__year { font-family: var(--font-mono); font-size: 0.875rem; color: color(gray, 500); padding-top: 0.125rem; }
+  .pubrow__main { display: grid; gap: 0.25rem; min-width: 0; }
+  .pubrow__title { font-weight: 600; line-height: 1.5; color: color(gray, 900); transition: color 0.15s ease; }
+  .pubrow__meta { font-size: 0.875rem; color: color(gray, 600); @include line-clamp(1); }
 
   // ---- Sections ----
   .section { padding-block: 4rem; background: var(--c-white); }
@@ -284,7 +277,7 @@ const activities = (await getCollection('activities'))
     background: var(--c-white); border: 1px solid color(gray, 100); border-radius: var(--radius-xl);
     box-shadow: var(--shadow-sm); transition: all 0.15s ease;
     &:hover { box-shadow: var(--shadow-md); transform: translateY(-0.25rem); }
-    &:hover .pub__title { color: color(blue, 600); }
+    &:hover .pub__title { color: color(accent, 600); }
     &:hover .pub__cover :global(img) { transform: scale(1.05); }
   }
   .pub__cover {
@@ -306,7 +299,7 @@ const activities = (await getCollection('activities'))
   }
   .pub__venue {
     display: block; max-width: 100%; text-align: left; font-weight: 500;
-    color: color(blue, 600); background: color(blue, 50);
+    color: color(accent, 600); background: color(accent, 50);
     padding: 0.25rem 0.5rem; border-radius: var(--radius-sm);
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
@@ -317,7 +310,7 @@ const activities = (await getCollection('activities'))
     background: var(--c-white); border: 1px solid color(gray, 100); border-radius: var(--radius-xl);
     overflow: hidden; transition: box-shadow 0.15s ease;
     &:hover { box-shadow: var(--shadow-lg); }
-    &:hover .activity__title { color: color(blue, 600); }
+    &:hover .activity__title { color: color(accent, 600); }
     &:hover .activity__cover :global(img) { transform: scale(1.1); }
   }
   .activity__cover {

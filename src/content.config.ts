@@ -51,6 +51,7 @@ const team = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/team" }),
   schema: ({ image }) => z.object({
     name: z.string(),
+    nameEn: z.string().optional(), // English name, shown next to the Korean one
     role: z.enum([
       'Principal Investigator', 
       'Professor', 
@@ -63,19 +64,10 @@ const team = defineCollection({
       'Undergraduate', 
       'Alumni'
     ]).default('Master Student'),
-    title: z.array(z.string()).optional(), // For specific academic titles like "Academician", "Changjiang Scholar"
     avatar: image().optional(), // local photo in src/assets; falls back to avatar-placeholder.svg
     avatarUrl: z.string().url().optional(), // external image URL (takes priority over avatar)
-    bio: z.string().optional(), // Short bio for card
     email: z.string().optional(),
-    phone: z.string().optional(),
-    office: z.string().optional(), // e.g. 51호관 320호
-    lab: z.string().optional(), // e.g. 51호관 328호
-    website: z.string().optional(),
-    linkedin: z.string().optional(),
-    github: z.string().optional(),
-    twitter: z.string().optional(),
-    googleScholar: z.string().optional(),
+    googleScholar: z.string().url().optional(),
     weight: z.number().default(100),
   }),
 });
@@ -103,8 +95,9 @@ const patents = defineCollection({
   loader: glob({ pattern: "**/*.{md,mdx}", base: "./src/content/patents" }),
   schema: z.object({
     title: z.string(),
-    inventors: z.array(z.string()),
-    number: z.string(), // Patent Number
+    titleEn: z.string().optional(), // English title, shown under the title
+    inventors: z.array(z.string()).optional(), // omitted when the source doesn't list co-inventors
+    number: z.string().optional(), // Patent Number
     assignee: z.string().optional(), // e.g. 창원대학교 산학협력단
     date: z.date(),
     status: z.enum(['Granted', 'Pending', 'Filed']),
