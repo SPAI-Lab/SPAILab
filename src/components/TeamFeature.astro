@@ -1,0 +1,78 @@
+---
+// Wide profile card for faculty / PI. Students use the compact TeamCard.
+import { url } from '../lib/url';
+import type { CollectionEntry } from 'astro:content';
+import { Mail, ArrowRight } from 'lucide-react';
+import { memberPhotoSrc } from '../lib/avatar';
+
+interface Props { member: CollectionEntry<'team'>; }
+
+const { member } = Astro.props;
+const { name, nameEn, email } = member.data;
+const photo = memberPhotoSrc(member);
+const profileUrl = url(`/team/${member.id.replace(/\.[^/.]+$/, '')}`);
+
+---
+<article class="feature">
+  <a href={profileUrl} class="feature__photo" tabindex="-1" aria-hidden="true">
+    <img src={photo} alt="" loading="lazy" />
+  </a>
+
+  <div class="feature__body">
+    <h3 class="feature__name"><a href={profileUrl}>{name}</a></h3>
+
+    {nameEn && <p class="feature__name-en">{nameEn}</p>}
+
+    {email && (
+      <ul class="feature__contact">
+        <li><Mail size={16} /><a href={`mailto:${email}`}>{email}</a></li>
+      </ul>
+    )}
+
+    <a href={profileUrl} class="feature__more">
+      <span data-i18n-key="team.profile">View profile</span>
+      <ArrowRight size={16} />
+    </a>
+  </div>
+</article>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .feature {
+    @include surface(var(--radius-2xl));
+    display: grid; gap: 1.5rem; padding: 1.5rem;
+    transition: box-shadow 0.15s ease;
+    &:hover { box-shadow: var(--shadow-md); }
+
+    @include up(sm) { grid-template-columns: 14rem 1fr; gap: 2rem; padding: 2rem; }
+  }
+
+  .feature__photo {
+    display: block; width: 12rem; aspect-ratio: 5 / 6; overflow: hidden; border-radius: var(--radius-xl); background: color(gray, 100);
+    @include up(sm) { width: 100%; }
+    img { width: 100%; height: 100%; object-fit: contain; }
+  }
+
+  .feature__name {
+    font-size: 1.5rem; line-height: 2rem; font-weight: 700; color: color(gray, 900);
+    a:hover { color: color(red, 600); }
+  }
+  .feature__name-en { margin-top: 0.25rem; color: color(gray, 500); }
+
+  .feature__contact {
+    list-style: none; margin: 1.25rem 0 0; padding: 0; display: grid; gap: 0.375rem;
+    font-size: 0.9375rem; color: color(gray, 700);
+    li { display: flex; align-items: center; gap: 0.625rem; }
+    svg { flex-shrink: 0; color: color(red, 600); }
+    a:hover { color: color(red, 600); text-decoration: underline; }
+  }
+
+  .feature__more {
+    display: inline-flex; align-items: center; gap: 0.375rem; margin-top: 1.5rem;
+    font-size: 0.9375rem; font-weight: 600; color: color(gray, 900);
+    transition: color 0.15s ease, gap 0.15s ease;
+    &:hover { color: color(red, 600); gap: 0.625rem; }
+  }
+</style>

@@ -4,7 +4,6 @@ authors: ["Seung-Woo Lee", "Iksu Seo", "Jongwon Seok", "Yunsu Kim", "Dong Seog H
 year: 2020
 venue: "Applied Sciences"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.3390/app10238450"
   code: ""

@@ -95,8 +95,7 @@ const formatLabel = (key: string) => {
 
   .pub {
     display: flex; flex-direction: column; gap: 1.5rem;
-    padding-block: 2rem; border-bottom: 1px solid color(gray, 100);
-    &:last-child { border-bottom: 0; }
+    padding-block: 1.25rem;
     @include up(sm) { flex-direction: row; }
   }
   .pub__cover {
@@ -112,7 +111,7 @@ const formatLabel = (key: string) => {
     font-size: 1.125rem; line-height: 1.25; font-weight: 600; color: color(gray, 900);
     transition: color 0.15s;
   }
-  .pub:hover .pub__title { color: color(blue, 600); }
+  .pub:hover .pub__title { color: color(accent, 600); }
   .pub__authors { color: color(gray, 600); font-size: 0.875rem; line-height: 1.625; }
 
   .pub__meta {
@@ -128,7 +127,7 @@ const formatLabel = (key: string) => {
     :global(svg) { @include icon(0.75rem); }
   }
   .badge--gold { background: linear-gradient(to right, color(amber, 50), color(yellow, 50)); color: color(amber, 700); border-color: color(amber, 200); box-shadow: var(--shadow-sm); }
-  .badge--blue { background: color(blue, 50); color: color(blue, 700); border-color: color(blue, 100); }
+  .badge--blue { background: color(accent, 50); color: color(accent, 700); border-color: color(accent, 100); }
   .badge--red { background: color(rose, 50); color: color(rose, 700); border-color: color(rose, 100); }
   .badge--green { background: color(emerald, 50); color: color(emerald, 700); border-color: color(emerald, 100); }
   .badge--default { background: color(gray, 50); color: color(gray, 700); border-color: color(gray, 200); }
@@ -139,7 +138,7 @@ const formatLabel = (key: string) => {
     padding: 0.25rem 0.75rem; font-size: 0.75rem; line-height: 1rem; font-weight: 500;
     color: color(gray, 600); border: 1px solid color(gray, 200); border-radius: var(--radius-md);
     transition: all 0.15s;
-    &:hover { color: color(blue, 600); border-color: color(blue, 200); background: color(blue, 50); }
+    &:hover { color: color(accent, 600); border-color: color(accent, 200); background: color(accent, 50); }
     :global(svg) { @include icon(0.875rem); }
   }
 </style>

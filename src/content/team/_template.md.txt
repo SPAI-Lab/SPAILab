@@ -1,0 +1,18 @@
+# 연구원 추가 방법
+# 1) 이 파일을 복사해서 이름을 바꾸고 확장자를 .md 로 만든다.  예) hong-gildong.md
+# 2) 아래 '---' 사이에 한국 이름, 영어 이름, 이메일을 채운다.
+# 3) 커밋 → 푸시 → PR 머지하면 팀 페이지에 자동으로 나타난다.
+#
+# role 값: Principal Investigator | Professor | Postdoc | Research Assistant
+#          PhD Student | Master Student | Undergraduate | Alumni
+# 사진: src/assets/members에 영문 파일명으로 넣는다. (없으면 기본 아바타)
+#
+---
+name: "홍길동"
+nameEn: "Gildong Hong"
+role: "Master Student"
+email: "gildong@changwon.ac.kr"
+# googleScholar: "https://scholar.google.com/citations?user=..."
+avatar: "../../assets/members/hong-gildong.jpg"
+weight: 10          # 같은 그룹 안에서 작은 숫자가 먼저
+---

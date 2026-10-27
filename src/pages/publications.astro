@@ -66,7 +66,7 @@ const chips = [...counts.entries()].sort((a, b) => b[1] - a[1]);
       ))}
 
       {allPapers.length === 0 && (
-        <EmptyState message="No publications found. Add markdown files to src/content/publications/" />
+        <EmptyState message="No publications found." />
       )}
     </div>
     <p class="none" id="pub-none" hidden>검색 결과가 없습니다.</p>
@@ -122,7 +122,7 @@ const chips = [...counts.entries()].sort((a, b) => b[1] - a[1]);
   .filter__input {
     width: 100%; padding: 0.75rem 1rem; font-size: 1rem;
     border: 1px solid color(gray, 200); border-radius: var(--radius-xl); background: var(--c-white);
-    &:focus { outline: none; box-shadow: 0 0 0 2px color(blue, 500); border-color: transparent; }
+    &:focus { outline: none; box-shadow: 0 0 0 2px color(accent, 500); border-color: transparent; }
   }
   .filter__chips { display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .chip {
@@ -131,9 +131,9 @@ const chips = [...counts.entries()].sort((a, b) => b[1] - a[1]);
     color: color(gray, 600); background: color(gray, 50);
     border: 1px solid color(gray, 200); border-radius: var(--radius-full);
     transition: background 0.15s, color 0.15s, border-color 0.15s;
-    &:hover { background: color(blue, 50); color: color(blue, 600); }
-    &[aria-pressed='true'] { background: color(blue, 600); color: var(--c-white); border-color: color(blue, 600); }
-    &[aria-pressed='true'] .chip__count { color: color(blue, 100); }
+    &:hover { background: color(accent, 50); color: color(accent, 600); }
+    &[aria-pressed='true'] { background: color(accent, 600); color: var(--c-white); border-color: color(accent, 600); }
+    &[aria-pressed='true'] .chip__count { color: color(accent, 100); }
   }
   .chip__count { font-size: 0.75rem; color: color(gray, 400); }
   .filter__status { font-size: 0.875rem; color: color(gray, 500); min-height: 1.25rem; }

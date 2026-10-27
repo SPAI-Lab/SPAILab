@@ -1,8 +1,8 @@
 ---
 import { ScrollText } from 'lucide-react';
 import StatusBadge from './StatusBadge.astro';
-interface Props { title: string; inventors: string[]; number: string; date: Date; status: string; }
-const { title, inventors, number, date, status } = Astro.props;
+interface Props { title: string; titleEn?: string; inventors?: string[]; number?: string; date: Date; status: string; assignee?: string; }
+const { title, titleEn, inventors, number, date, status, assignee } = Astro.props;
 ---
 <div class="patent">
   <div class="patent__icon"><ScrollText size={24} /></div>
@@ -11,11 +11,15 @@ const { title, inventors, number, date, status } = Astro.props;
       <h3>{title}</h3>
       <StatusBadge status={status} />
     </div>
-    <div class="patent__inventors">
-      <span class="patent__label" data-i18n-key="achievements.inventors">Inventors:</span> {inventors.join(', ')}
-    </div>
+    {titleEn && <p class="patent__title-en">{titleEn}</p>}
+    {inventors && inventors.length > 0 && (
+      <div class="patent__inventors">
+        <span class="patent__label" data-i18n-key="achievements.inventors">Inventors:</span> {inventors.join(', ')}
+      </div>
+    )}
     <div class="patent__meta">
-      <span class="patent__number">{number}</span>
+      {number && <span class="patent__number">{number}</span>}
+      {assignee && <span class="patent__assignee">{assignee}</span>}
       <time>{date.toLocaleDateString()}</time>
     </div>
   </div>
@@ -27,6 +31,7 @@ const { title, inventors, number, date, status } = Astro.props;
   .patent { @include surface; padding: 1.5rem; display: flex; gap: 1rem; box-shadow: var(--shadow-sm); transition: box-shadow 0.2s ease; &:hover { box-shadow: var(--shadow-md); } }
   .patent__icon { align-self: flex-start; display: flex; flex-shrink: 0; padding: 0.75rem; background: color(amber, 50); color: color(amber, 600); border-radius: var(--radius-lg); }
   .patent__main { flex-grow: 1; }
+  .patent__title-en { margin: 0.25rem 0 0.75rem; font-size: 0.8125rem; line-height: 1.5; color: color(gray, 500); }
   .patent__head {
     display: flex; flex-direction: column; justify-content: space-between; gap: 0.5rem; margin-bottom: 0.5rem;
     @include up(sm) { flex-direction: row; align-items: center; }

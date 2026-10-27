@@ -1,6 +1,7 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import TeamCard from '../components/TeamCard.astro';
+import TeamFeature from '../components/TeamFeature.astro';
 import Container from '../components/ui/Container.astro';
 import PageHeader from '../components/ui/PageHeader.astro';
 import { getCollection } from 'astro:content';
@@ -12,12 +13,14 @@ const groups = [
   {
     id: 'pi',
     titleKey: 'team.pi',
-    roles: ['Principal Investigator']
+    roles: ['Principal Investigator'],
+    feature: true
   },
   {
     id: 'faculty',
     titleKey: 'team.faculty',
-    roles: ['Professor', 'Associate Professor', 'Assistant Professor']
+    roles: ['Professor', 'Associate Professor', 'Assistant Professor'],
+    feature: true
   },
   {
     id: 'postdoc',
@@ -86,7 +89,7 @@ const groupedMembers = groups.reduce((acc, group) => {
     });
   }
   return acc;
-}, [] as Array<{ id: string, titleKey: string, roles: string[], members: typeof allMembers }>);
+}, [] as Array<{ id: string, titleKey: string, roles: string[], feature?: boolean, members: typeof allMembers }>);
 
 ---
 
@@ -114,16 +117,16 @@ const groupedMembers = groups.reduce((acc, group) => {
              group.id === 'undergrad' ? 'Undergraduate Students' :
              group.id === 'alumni' ? 'Alumni' : ''}
           </h2>
-          <div class="team__grid">
+          <div class:list={['team__grid', { 'team__grid--feature': group.feature }]}>
             {group.members.map(member => (
-              <TeamCard member={member} />
+              group.feature ? <TeamFeature member={member} /> : <TeamCard member={member} />
             ))}
           </div>
         </section>
       ))}
 
       {allMembers.length === 0 && (
-        <p class="team__empty" data-i18n-key="team.noMembers">No team members found. Add markdown files to src/content/team/</p>
+        <p class="team__empty" data-i18n-key="team.noMembers">No team members found.</p>
       )}
     </div>
   </Container>
@@ -133,27 +136,24 @@ const groupedMembers = groups.reduce((acc, group) => {
   @use 'tokens' as *;
   @use 'mixins' as *;
 
-  .team__groups > * + * { margin-top: 5rem; }
+  .team__groups > * + * { margin-top: 4rem; }
 
   .team__group-title {
-    font-size: 1.5rem;
-    line-height: 2rem;
-    font-weight: 700;
-    color: color(gray, 900);
-    margin-bottom: 2rem;
-    padding-left: 1rem;
-    border-left: 4px solid color(blue, 600);
+    display: flex; align-items: center; gap: 1rem;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono); font-size: 0.8125rem; font-weight: 600;
+    letter-spacing: 0.12em; text-transform: uppercase; color: color(red, 600);
+
+    &::after { content: ''; flex: 1; height: 1px; background: color(gray, 200); }
   }
 
   .team__grid {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
     column-gap: 2rem;
     row-gap: 3rem;
-
-    @include up(sm) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    @include up(lg) { grid-template-columns: repeat(4, minmax(0, 1fr)); }
   }
+  .team__grid--feature { grid-template-columns: 1fr; row-gap: 1.5rem; }
 
   .team__empty {
     color: color(gray, 500);

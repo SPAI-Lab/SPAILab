@@ -4,7 +4,6 @@ authors: ["Dongwook Kim", "Jongwon Seok", "Keunsung Bae"]
 year: 2018
 venue: "Venue unavailable"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: ""
   code: ""

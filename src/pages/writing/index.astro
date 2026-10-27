@@ -1,0 +1,127 @@
+---
+import { url } from '../../lib/url';
+import Layout from '../../layouts/Layout.astro';
+import { getCollection } from 'astro:content';
+import { ArrowUpRight } from 'lucide-react';
+import Container from '../../components/ui/Container.astro';
+import PageHeader from '../../components/ui/PageHeader.astro';
+import EmptyState from '../../components/ui/EmptyState.astro';
+
+// Every .md in src/content/writing becomes a list item — rendered with .map() like a React list.
+const posts = (await getCollection('writing', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+// Tag chips are derived from the posts themselves; no tags → no filter bar.
+const tags = [...new Set(posts.flatMap(post => post.data.tags))].sort();
+
+const postSlug = (id: string) => id.replace(/\.[^/.]+$/, '');
+const fmt = (d: Date) => d.toISOString().split('T')[0];
+---
+
+<Layout title="Writing">
+  <Container size="narrow" padded>
+    <PageHeader
+      title="Writing"
+      titleKey="writing.title"
+      subtitle="Notes, tutorials, and write-ups from our lab members."
+      subtitleKey="writing.subtitle"
+    />
+
+    {posts.length > 0 && (
+      <>
+        {tags.length > 0 && (
+          <div class="filters" role="group" aria-label="Filter by tag" data-filters>
+            <button type="button" class="chip is-active" data-tag="" data-i18n-key="writing.all">All</button>
+            {tags.map(tag => <button type="button" class="chip" data-tag={tag}>{tag}</button>)}
+          </div>
+        )}
+
+        <ul class="posts" data-posts>
+          {posts.map(post => (
+            <li class="post" data-tags={post.data.tags.join('|')}>
+              <a href={url(`/writing/${postSlug(post.id)}`)} class="post__link">
+                <div class="post__meta">
+                  <time>{fmt(post.data.date)}</time>
+                  <span class="post__dot" aria-hidden="true"></span>
+                  <span>{post.data.author}</span>
+                </div>
+                <h2 class="post__title">
+                  {post.data.title}
+                  <ArrowUpRight size={18} />
+                </h2>
+                {post.data.summary && <p class="post__summary">{post.data.summary}</p>}
+                {post.data.tags.length > 0 && (
+                  <div class="post__tags">
+                    {post.data.tags.map(tag => <span class="tag">#{tag}</span>)}
+                  </div>
+                )}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )}
+
+    {posts.length === 0 && <EmptyState message="No posts yet." i18nKey="writing.empty" />}
+  </Container>
+</Layout>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-filters]');
+  const items = document.querySelectorAll<HTMLElement>('[data-posts] .post');
+  bar?.addEventListener('click', (e) => {
+    const btn = (e.target as HTMLElement).closest<HTMLButtonElement>('.chip');
+    if (!btn) return;
+    const tag = btn.dataset.tag ?? '';
+    bar.querySelectorAll('.chip').forEach(c => c.classList.toggle('is-active', c === btn));
+    items.forEach(item => {
+      const has = !tag || (item.dataset.tags ?? '').split('|').includes(tag);
+      item.hidden = !has;
+    });
+  });
+</script>
+
+<style lang="scss">
+  @use 'tokens' as *;
+  @use 'mixins' as *;
+
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+  .chip {
+    padding: 0.375rem 0.875rem; border: 1px solid color(gray, 200); border-radius: var(--radius-full);
+    background: var(--c-white); color: color(gray, 600); font-size: 0.875rem; cursor: pointer;
+    transition: all 0.15s ease;
+    &:hover { border-color: color(gray, 400); color: color(gray, 900); }
+    &.is-active { background: color(gray, 900); border-color: color(gray, 900); color: var(--c-white); }
+    &:focus-visible { outline: 2px solid color(red, 500); outline-offset: 2px; }
+  }
+
+  .posts { list-style: none; margin: 0; padding: 0; border-top: 1px solid color(gray, 200); }
+  .post[hidden] { display: none; }
+  .post { border-bottom: 1px solid color(gray, 200); }
+
+  .post__link {
+    display: block; padding: 1.75rem 0.25rem; transition: background-color 0.15s ease;
+    &:hover .post__title { color: color(red, 600); }
+    &:hover .post__title svg { opacity: 1; transform: translate(2px, -2px); }
+    &:focus-visible { outline: 2px solid color(red, 500); outline-offset: -2px; }
+  }
+
+  .post__meta {
+    display: flex; align-items: center; gap: 0.625rem; margin-bottom: 0.5rem;
+    font-size: 0.8125rem; color: color(gray, 500);
+    time { font-family: var(--font-mono); }
+  }
+  .post__dot { width: 3px; height: 3px; border-radius: 50%; background: color(gray, 400); }
+
+  .post__title {
+    display: flex; align-items: center; gap: 0.375rem;
+    font-size: 1.375rem; line-height: 1.5; font-weight: 700; color: color(gray, 900);
+    transition: color 0.15s ease; word-break: keep-all;
+    svg { flex-shrink: 0; opacity: 0; transition: all 0.15s ease; }
+  }
+
+  .post__summary { margin-top: 0.5rem; color: color(gray, 600); line-height: 1.7; word-break: keep-all; @include line-clamp(2); }
+
+  .post__tags { display: flex; flex-wrap: wrap; gap: 0.5rem 0.75rem; margin-top: 0.875rem; }
+  .tag { font-size: 0.8125rem; color: color(gray, 500); }
+</style>

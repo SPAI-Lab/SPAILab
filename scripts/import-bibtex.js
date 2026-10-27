@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import bibtexParse from 'bibtex-parse-js';
 import slugify from 'slugify';
+import { normalizeAuthor } from './normalize-author.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -29,15 +30,7 @@ function cleanString(str) {
 // Helper to parse authors
 function parseAuthors(authorStr) {
   if (!authorStr) return [];
-  return authorStr.split(' and ').map(name => {
-    const cleanName = cleanString(name);
-    // Handle "Last, First" format
-    if (cleanName.includes(',')) {
-      const parts = cleanName.split(',').map(p => p.trim());
-      return `${parts[1]} ${parts[0]}`;
-    }
-    return cleanName;
-  });
+  return authorStr.split(/\s+and\s+/).map(normalizeAuthor).filter(Boolean);
 }
 
 // Main function
@@ -90,7 +83,6 @@ function importBibtex() {
     // Extract additional fields
     // Cover image: check 'cover', 'image', 'figure'
     let cover = cleanString(tags.cover || tags.image || tags.figure || '');
-    const DEFAULT_COVER = '../../assets/paper-vision.jpg';
 
     // Validate cover image existence
     if (cover) {
@@ -100,11 +92,9 @@ function importBibtex() {
       const absolutePath = path.join(process.cwd(), relativeToRoot);
       
       if (!fs.existsSync(absolutePath)) {
-        console.warn(`Warning: Cover image not found at ${absolutePath}. Using default.`);
-        cover = DEFAULT_COVER;
+        console.warn(`Warning: Cover image not found at ${absolutePath}. Skipping cover.`);
+        cover = '';
       }
-    } else {
-      cover = DEFAULT_COVER;
     }
     
     // PDF link
@@ -179,7 +169,7 @@ function importBibtex() {
       `venue: "${venue.replace(/"/g, '\\"')}"`,
       // Only add type for publications, not books
       isBook ? '' : `type: "${type}"`,
-      `cover: "${cover}"`,
+      cover ? `cover: "${cover}"` : '',
       'links:',
       `  pdf: "${pdf}"`,
       `  code: "${code}"`,

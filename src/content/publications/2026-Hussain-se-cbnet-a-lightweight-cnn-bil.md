@@ -4,7 +4,6 @@ authors: ["Tajmal Hussain", "Jongwon Seok"]
 year: 2026
 venue: "Journal of Food Measurement & Characterization"
 type: "paper"
-cover: "../../assets/paper-vision.jpg"
 links:
   pdf: "https://doi.org/10.1007/s11694-026-04508-2"
   code: ""
