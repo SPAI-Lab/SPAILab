@@ -46,9 +46,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
         <a href={url("/")} class="brand__link">
           {LOGO_IMAGE.enable && SITE.logo && <img src={url(SITE.logo)} alt="Logo" class="brand__logo" />}
           <div class="brand__text">
-            <span class="brand__name">
-              {SITE.labName}
-            </span>
+            <img src={url('/assets/spai-wordmark.png')} alt="SP&amp;AI" class="brand__wordmark" />
             <span class="brand__university">
               {SITE.university}
             </span>
@@ -151,7 +149,7 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     <div class="mobile-menu__top">
       <div class="mobile-menu__brand">
         {LOGO_IMAGE.enable && SITE.logo && <img src={url(SITE.logo)} alt="Logo" class="mobile-menu__logo" />}
-        <span class="mobile-menu__name">{SITE.labName}</span>
+        <img src={url('/assets/spai-wordmark.png')} alt="SP&amp;AI" class="mobile-menu__wordmark" />
       </div>
       <button 
         onclick="window.closeMobileMenu()" 
@@ -410,8 +408,8 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     gap: 0.75rem;
   }
   .brand__logo {
-    height: 2rem;
-    width: 2rem;
+    height: 2.5rem;
+    width: 2.5rem;
     object-fit: contain;
   }
   .brand__text {
@@ -430,6 +428,12 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     font-size: 1.125rem;
     line-height: 1.25;
     transition: color 0.15s;
+  }
+  .brand__wordmark {
+    display: block;
+    width: 5.5rem;
+    height: 1.85rem;
+    object-fit: contain;
   }
   .brand__link:hover .brand__name { color: color(accent, 600); }
   .brand__university {
@@ -599,6 +603,12 @@ const getIcon = (key: string) => iconMap[key] || Sparkles;
     color: color(gray, 900);
     font-size: 1.25rem;
     line-height: 1.75rem;
+  }
+  .mobile-menu__wordmark {
+    display: block;
+    width: 6.5rem;
+    height: 2.2rem;
+    object-fit: contain;
   }
   .mobile-menu__close {
     padding: 0.5rem;

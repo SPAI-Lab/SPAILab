@@ -13,8 +13,8 @@ export const SITE = {
   // Lab Info
   labName: 'SP&AI Lab',
   university: '창원대학교 정보통신공학과',
-  logo: '/assets/cwnu-symbol.svg', // Logo path
-  avatar: '/assets/cwnu-symbol.svg', // Avatar for SEO/Schema
+  logo: '/assets/cwnu-symbol.svg', // Changwon National University symbol used in the site header
+  avatar: '/assets/spai-symbol.png', // Avatar for SEO/Schema
   // Physical locations (shown in the footer and on the Join page)
   locations: [
     { key: 'location.student', text: 'Student Lab: Bldg. 51, Room 328' },
